@@ -3,6 +3,8 @@ CLI - Terminal
 style.py
 """
 
+END: str = '\033[0m'
+
 class Style:
     """
     Color codes for the terminal, from the Select Graphic Rendition subset.

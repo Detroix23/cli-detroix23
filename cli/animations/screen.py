@@ -6,6 +6,7 @@ Multi-line updating terminal display.
 
 import os
 import time
+import random
 from typing import Callable
 from enum import Enum
 
@@ -40,15 +41,24 @@ class Screen:
     def __init__(
         self, 
         void_char: str = ".",
-        frame_delay: float = 0.1
+        frame_delay: float = 0.1,
+        global_style: str = "",
+        debug: bool = False,
+        deactivate_screen: bool = False
     ) -> None:
         self.size: Vector2D = Vector2D(*self.update_size())
         self.updater: Callable[..., None] | None = None
         self.drawer: Callable[..., None] | None = None
         self._frames: int = 0
+        self.debug: bool = debug
+        self.deactivate_screen: bool = deactivate_screen
+
         self.void_char: str = void_char
-        self.char_table: list[list[str]] = self.blank_char_table()
         self.frame_delay: float = frame_delay
+        self.global_style: str = global_style
+
+        self.char_table: list[list[str]] = self.blank_char_table()
+
 
     def run(
         self,       
@@ -64,12 +74,13 @@ class Screen:
 
         running: bool = True
 
-        print("\033[H\033[2J", end="")
         try:
+            # Main loop
             while running:
                 # Clear the whole screen.
-                print("\033[H\033[2J", end="")
-                print("\033[H\033[3J", end="")
+                if not (self.deactivate_screen or self.debug):
+                    # print("\033[H\033[2J", end="")
+                    print("", end="\033[H\033[3J")
                 
                 # Update.
                 self.size: Vector2D = Vector2D(*self.update_size())
@@ -79,7 +90,10 @@ class Screen:
                 self.drawer(self)
 
                 # Char table
-                self.print_char_table()
+                if self.debug:
+                    print(fr"{self.char_table}")
+                if not (self.debug or self.deactivate_screen):
+                    self.print_char_table()
                 self.char_table = self.blank_char_table()
 
                 # Frames
@@ -103,60 +117,99 @@ class Screen:
         """
         Return the default char table state.
         """
-        return [[self.void_char for _ in range(self.size.x)] for _ in range(self.size.y - 1)]
+        return [
+            [self.void_char for _ in range(self.size.x)] 
+            for _ in range(self.size.y - 1)
+        ]
 
-    def write_char(self, char: str, position: Vector2D, styles: str) -> None:
+    def _write_char(self, char: str, position: Vector2D, styles: str = "") -> None:
         """
         Add a character (len == 1) and its position to the next printed table.
         (0, 0) is the upper left corner.
         """
-        if len(char) > 1:
+        raise_on_long_char: bool = False
+        warn_on_outside: bool = self.debug
+
+        if len(char) > 1 and raise_on_long_char:
             raise ValueError(f"{style.Color.RED}(X) - Must be a char: {char}, ({len(char)}).{style.Style.END}")
         try:
-            self.char_table[position.y][position.x] = styles + char + style.Style.END
-        except:
-            # style.printc(f"(!) - Character {char} ignored at {position}.", style.Color.YELLOW)
-            pass
+            if styles:
+                self.char_table[position.y][position.x] = styles + char + style.Style.END
+            else:
+                self.char_table[position.y][position.x] = char
 
-    def write(self, message: str, start: Vector2D, way: ReadingWay = ReadingWay.LEFT_RIGHT, styles: str = "") -> None:
+        except:
+            if warn_on_outside:
+                style.printc(f"(!) - Character {char} ignored at {position}.", style.Color.YELLOW)
+
+    def write(self, message: str | list[str], start: Vector2D, way: ReadingWay = ReadingWay.LEFT_RIGHT, styles: str = "") -> int:
         """
         Write whole words in the char table.
         Follow the reading `way`.
+        Returns the length of the written message.
         """
-        shift: Vector2D
-        if way == ReadingWay.LEFT_RIGHT:
-            shift = Vector2D(1, 0)
-        elif way == ReadingWay.RIGHT_LEFT:
-            shift = Vector2D(-1, 0)
-        elif way == ReadingWay.DOWN_UP:
-            shift = Vector2D(0, -1)
-        elif way == ReadingWay.UP_DOWN:
-            shift = Vector2D(0, 1)
+        if not message:
+            pass
+        elif len(message) == 1 and isinstance(message, str):
+            self._write_char(message, start, styles)
+        elif len(message) == 1 and isinstance(message, list):
+            self._write_char(message[0], start, styles)
         else:
-            raise ValueError(f"{style.Color.RED}(X) - Must be a valid direction (0 - 3): {way}.{style.Style.END}")
+            shift: Vector2D
+            if way == ReadingWay.LEFT_RIGHT:
+                shift = Vector2D(1, 0)
+            elif way == ReadingWay.RIGHT_LEFT:
+                shift = Vector2D(-1, 0)
+            elif way == ReadingWay.DOWN_UP:
+                shift = Vector2D(0, -1)
+            elif way == ReadingWay.UP_DOWN:
+                shift = Vector2D(0, 1)
+            else:
+                raise ValueError(f"{style.Color.RED}(X) - Must be a valid direction (0 - 3): {way}.{style.Style.END}")
 
-
-        for index, letter in enumerate(message):
-            self.write_char(
-                letter,
-                Vector2D(
-                    start.x + index * shift.x,
-                    start.y + index * shift.y
-                ),
-                styles
-            )
-
+            if isinstance(message, str):
+                for index, letter in enumerate(message):
+                    self._write_char(
+                        letter,
+                        Vector2D(
+                            start.x + index * shift.x,
+                            start.y + index * shift.y
+                        ),
+                        styles
+                    )
+            else:
+                # print(f"MESSAGE: {message}")
+                for index, composition in enumerate(message):
+                    # print(f"\nc: {composition}", end="")
+                    self._write_char(
+                        composition,
+                        Vector2D(
+                            start.x + index * shift.x,
+                            start.y + index * shift.y
+                        ),
+                        styles
+                    )
+        
+        return len(message)
 
     def print_char_table(self) -> None:
         """
         When all chars are written, print the table that covers the whole screen.
+        Printed in one time for the sake of smoothness.
         """
+        table: str = ""
         for records in self.char_table:
             for char in records:
-                print(char, end="")
-        print()
+                table += self.global_style + char + style.END
+            table += "\n"
+        print(table, end="")
 
+    def total_char_table_len(self) -> int:
+        total: int = 0
+        for record in self.char_table:
+            total += len(record)
 
+        return total
 
 
 class Custom1(Screen):
@@ -170,27 +223,114 @@ class Custom1(Screen):
             self.hello -= 1
 
         def drawer(self) -> None:
-            
-
             print(self.size)
             print(self.frames)
             print(self.hello)
 
-class Matrix(Screen):
-        def __init__(self) -> None:
-            super().__init__()
-            self.hello: int = 0
 
+class Dropplet:
+    char: str
+    position: Vector2D
+    last_chars: list[str]
+
+    def __init__(self, screen: 'Matrix') -> None:
+        self.screen: 'Matrix' = screen
+        self.char: str = self._random_char(*self.screen.character_random_range)
+        self.position: Vector2D = self._random_position(self.screen)
+        self.last_chars: list[str] = []
+
+    def _random_char(self, random_min: int, random_max: int) -> str:
+        r: int = 0
+        blacklist: list[int] = [0, 20, 127]
+        r = random.randint(random_min, random_max)
+        if r in blacklist:
+            r = 42
+        return chr(r)
+
+    def _random_position(self, screen: Screen) -> Vector2D:
+        return Vector2D(random.randint(0, screen.size.x), 0)
+
+    def update(self) -> None:
+        """
+        Update the dropplet. Apply gravity.
+        """
+        self.last_chars.insert(0, self.char)
+        if len(self.last_chars) > random.randint(5, 10):
+            self.last_chars.pop()
+
+        self.position.y += 1
+        self.char = self._random_char(*self.screen.character_random_range)
+
+    def full_tail(self) -> list[str]:
+        """
+        Return the string list of all character (current and tail's) formated.
+        """
+        tail: list[str] = [f"{style.Text.BOLD}{self.char}{style.END}"]
+        for index, char in enumerate(self.last_chars):
+            if index < len(self.last_chars) // 2:
+                tail.append(f"{style.Color.LIGHT_GREEN}{char}{style.END}")
+            else:
+                tail.append(f"{style.Color.GREEN}{char}{style.END}")
+
+        return tail
+
+class Matrix(Screen):
+        digital_rain: list[Dropplet]
+
+        def __init__(
+            self,
+            character_random_range: tuple[int, int] = (40, 127),
+            infos: bool = False
+        ) -> None:
+            super().__init__(
+                frame_delay=0.05,
+                void_char=" ",
+                global_style=style.Back.BLACK,
+                debug=False,
+                deactivate_screen=False
+            )
+            self.digital_rain: list[Dropplet] = list()
+            self.character_random_range: tuple[int, int] = character_random_range
+            self.infos: bool = infos
+        
         def updater(self) -> None:
-            pass
+            # New dropplet
+            if self.frames % 1 == 0:
+                self.digital_rain.append(Dropplet(self))
+
+            # Update each existing dropplet
+            new_rain: list[Dropplet] = list()
+            for dropplet in self.digital_rain:
+                dropplet.update()
+                if dropplet.position.y - len(dropplet.last_chars) <= self.size.y:
+                    new_rain.append(dropplet)
+            
+            self.digital_rain = new_rain
+
 
         def drawer(self) -> None:
-            self.write(f"frames: {self.frames}", Vector2D(0, 0))
+            cursor: int = 1
+            # Draw each existing dropplets.
+            for dropplet in self.digital_rain:
+                self.write(dropplet.full_tail(), dropplet.position, ReadingWay.DOWN_UP)
+
+            # Infos.
+            if self.infos:
+                cursor += 1 + self.write(f"frames: {self.frames}", Vector2D(cursor, 0), ReadingWay.LEFT_RIGHT)
+                cursor += 1 + self.write(f"table: {self.total_char_table_len()}", Vector2D(cursor, 0), ReadingWay.LEFT_RIGHT)
+                cursor += 1 + self.write(f"x: {self.size.x}", Vector2D(cursor, 0), ReadingWay.LEFT_RIGHT)
+                cursor += 1 + self.write(f"y: {self.size.y}", Vector2D(cursor, 0), ReadingWay.LEFT_RIGHT)
+                cursor += 1 + self.write(f"n: {len(self.digital_rain)}", Vector2D(cursor, 0), ReadingWay.LEFT_RIGHT)
+
+
+
 
 def main_test() -> None:
 
-    screen = Matrix()
-    print(Matrix.updater, Matrix.drawer)
+    screen = Matrix(
+        character_random_range=(32, 127),
+        infos=False
+    )
     screen.run(Matrix.updater, Matrix.drawer)
 
 if __name__ == "__main__":
