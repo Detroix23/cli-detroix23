@@ -119,7 +119,7 @@ class Screen:
         """
         return [
             [self.void_char for _ in range(self.size.x)] 
-            for _ in range(self.size.y - 1)
+            for _ in range(self.size.y)
         ]
 
     def _write_char(self, char: str, position: Vector2D, styles: str = "") -> None:
@@ -198,11 +198,12 @@ class Screen:
         Printed in one time for the sake of smoothness.
         """
         table: str = ""
+        self.char_table[-1].pop()
         for records in self.char_table:
             for char in records:
                 table += self.global_style + char + style.END
             table += "\n"
-        print(table, end="")
+        print(table[:-5], end="")
 
     def total_char_table_len(self) -> int:
         total: int = 0
@@ -241,7 +242,7 @@ class Dropplet:
 
     def _random_char(self, random_min: int, random_max: int) -> str:
         r: int = 0
-        blacklist: list[int] = [0, 20, 127]
+        blacklist: list[int] = [0, 24, 47, 97, 127, 128, 129, 130, 131, 132, 133, 141, 143, 144, 149, 151, 157, 160, 168, 173, 175, 180, 184]
         r = random.randint(random_min, random_max)
         if r in blacklist:
             r = 42
@@ -279,11 +280,12 @@ class Matrix(Screen):
 
         def __init__(
             self,
+            frame_delay: float,
             character_random_range: tuple[int, int] = (40, 127),
             infos: bool = False
         ) -> None:
             super().__init__(
-                frame_delay=0.05,
+                frame_delay=frame_delay,
                 void_char=" ",
                 global_style=style.Back.BLACK,
                 debug=False,
@@ -295,7 +297,7 @@ class Matrix(Screen):
         
         def updater(self) -> None:
             # New dropplet
-            if self.frames % 1 == 0:
+            for _ in range(self.size.x // 50 + 1):
                 self.digital_rain.append(Dropplet(self))
 
             # Update each existing dropplet
@@ -326,10 +328,12 @@ class Matrix(Screen):
 
 
 def main_test() -> None:
-
+	# (48, 49) binary.
+	# (32, 132) general.
     screen = Matrix(
-        character_random_range=(32, 127),
-        infos=False
+        frame_delay=0.08,
+        character_random_range=(32, 132),
+        infos=True
     )
     screen.run(Matrix.updater, Matrix.drawer)
 
