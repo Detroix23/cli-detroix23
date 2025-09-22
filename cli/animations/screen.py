@@ -362,7 +362,7 @@ class Matrix(Screen):
 
 
 
-def main_test() -> None:
+def main() -> None:
 	# (48, 49) binary.
 	# (32, 132) general.
     screen = Matrix(
@@ -373,5 +373,5 @@ def main_test() -> None:
     screen.run(Matrix.updater, Matrix.drawer)
 
 if __name__ == "__main__":
-    main_test()
+    main()
     
