@@ -302,16 +302,30 @@ spinners: dict[str, Spinner] = {
     ),
 }
 
+def main() -> None:
+    run_bars1()
+    run_spinners1()
 
-if __name__ == "__main__":
-    a = bars["SimpleFull1"]
-    b = spinners["Bars1"]
-    a.reset()
+
+def run_spinners1() -> None:
+    b: Spinner = spinners["Wave1"]
     b.reset()
 
-    for _ in range(200):
-        # a.increment()
+    for _ in range(100):
         b.increment()
         time.sleep(0.1)
 
-    print()    
+    print()
+
+def run_bars1() -> None:
+    a: Bar = bars["SimpleFull1"]
+    a.reset()
+
+    for _ in range(100):
+        a.increment()
+        time.sleep(0.1)
+
+    print() 
+
+if __name__ == "__main__":
+    main()

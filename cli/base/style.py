@@ -3,6 +3,8 @@ CLI - Terminal
 style.py
 """
 
+import os
+
 # Shortcuts
 END: str = '\033[0m'
 DEFAULT: str = '\033[10m'
@@ -31,10 +33,16 @@ class Style:
 
     @staticmethod
     def display_all_rendition_subset(range_min: int = 0, range_max: int = 127) -> None:
+        size: tuple[int, int] = os.get_terminal_size()
+        char_count: int = 0
         for i in range(range_min, range_max):
-            print(f"(\033[{i}m Text {i}. {Style.END})", end="")
-            if i % 12 == 0 and i != 0:
+            text: str = f"Text {i}."
+            char_count += len(text)
+            if char_count > size[0] and len(text) <= size[0]:
                 print()
+                char_count = 0
+            else:
+                print(f"(\033[{i}m{text}{Style.END})", end="")
         print()
 
 class Text(Style):

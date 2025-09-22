@@ -3,10 +3,12 @@ CLI - Terminal
 formating.py
 """
 
+from typing import Iterable
+
 import base.style as style
 
-def set_to_table(
-    elements: set[str], 
+def table(
+    elements: Iterable[str], 
     max_per_col: int = 60,
     row_prefix: str = "\t",
     row_suffix: str = "",
