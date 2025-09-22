@@ -5,6 +5,7 @@ Multi-line updating terminal display.
 """
 
 import os
+import sys
 import time
 import random
 from typing import Callable
@@ -80,8 +81,10 @@ class Screen:
                 # Clear the whole screen.
                 if not (self.deactivate_screen or self.debug):
                     # print("\033[H\033[2J", end="")
-                    print("", end="\033[H\033[3J")
-                
+                    sys.stdout.write("\033[H\033[3J")
+                    sys.stdout.flush()
+
+
                 # Update.
                 self.size: Vector2D = Vector2D(*self.update_size())
 
@@ -95,6 +98,8 @@ class Screen:
                 if not (self.debug or self.deactivate_screen):
                     self.print_char_table()
                 self.char_table = self.blank_char_table()
+                sys.stdout.flush()
+                
 
                 # Frames
                 time.sleep(self.frame_delay)
@@ -203,7 +208,7 @@ class Screen:
             for char in records:
                 table += self.global_style + char + style.END
             table += "\n"
-        print(table[:-5], end="")
+        sys.stdout.write(table[:-5])
 
     def total_char_table_len(self) -> int:
         total: int = 0
