@@ -116,7 +116,13 @@ class Screen:
 
     @property
     def frames(self) -> int:
+        """
+        Get the value of frames. Semi-private proprety: read-only.
+        """
         return self._frames
+
+    def frames_reset(self) -> None:
+        self._frames = 0
 
     def blank_char_table(self) -> list[list[str]]:
         """
@@ -238,12 +244,14 @@ class Dropplet:
     char: str
     position: Vector2D
     last_chars: list[str]
+    frames_to_move: int
 
     def __init__(self, screen: 'Matrix') -> None:
         self.screen: 'Matrix' = screen
         self.char: str = self._random_char(*self.screen.character_random_range)
         self.position: Vector2D = self._random_position(self.screen)
         self.last_chars: list[str] = []
+        self.frames_to_move: int = random.randint(1, 1)
 
     def _random_char(self, random_min: int, random_max: int) -> str:
         r: int = 0
@@ -260,12 +268,16 @@ class Dropplet:
         """
         Update the dropplet. Apply gravity.
         """
-        self.last_chars.insert(0, self.char)
-        if len(self.last_chars) > random.randint(5, 10):
-            self.last_chars.pop()
+        # Move, if enough frames.
+        if self.screen.frames % self.frames_to_move == 0:
+            # Update tail.
+            self.last_chars.insert(0, self.char)
+            if len(self.last_chars) > random.randint(5, 10):
+                self.last_chars.pop()
 
-        self.position.y += 1
-        self.char = self._random_char(*self.screen.character_random_range)
+            # Move 1 tile.
+            self.position.y += 1
+            self.char = self._random_char(*self.screen.character_random_range)
 
     def full_tail(self) -> list[str]:
         """
@@ -282,6 +294,9 @@ class Dropplet:
 
 class Matrix(Screen):
         digital_rain: list[Dropplet]
+        character_random_range: tuple[int, int]
+        infos: bool
+        start_time: float
 
         def __init__(
             self,
@@ -299,7 +314,16 @@ class Matrix(Screen):
             self.digital_rain: list[Dropplet] = list()
             self.character_random_range: tuple[int, int] = character_random_range
             self.infos: bool = infos
+            self.start_time: float = time.monotonic()
         
+        def time_elapsed(self) -> float:
+            """
+            Return time elapsed from start time to now.
+            Float and using time.monotonic().
+            """
+            return time.monotonic() - self.start_time
+
+
         def updater(self) -> None:
             # New dropplet
             for _ in range(self.size.x // 50 + 1):
@@ -314,6 +338,12 @@ class Matrix(Screen):
             
             self.digital_rain = new_rain
 
+            # Prevent eventual overflow
+            time_of_reset: float = 600
+            if self.time_elapsed() > time_of_reset:
+                self.start_time = time.monotonic()
+                self.frames_reset()
+
 
         def drawer(self) -> None:
             cursor: int = 1
@@ -323,11 +353,11 @@ class Matrix(Screen):
 
             # Infos.
             if self.infos:
-                cursor += 1 + self.write(f"frames: {self.frames}", Vector2D(cursor, 0), ReadingWay.LEFT_RIGHT)
-                cursor += 1 + self.write(f"table: {self.total_char_table_len()}", Vector2D(cursor, 0), ReadingWay.LEFT_RIGHT)
-                cursor += 1 + self.write(f"x: {self.size.x}", Vector2D(cursor, 0), ReadingWay.LEFT_RIGHT)
-                cursor += 1 + self.write(f"y: {self.size.y}", Vector2D(cursor, 0), ReadingWay.LEFT_RIGHT)
-                cursor += 1 + self.write(f"n: {len(self.digital_rain)}", Vector2D(cursor, 0), ReadingWay.LEFT_RIGHT)
+                cursor += 1 + self.write(f"fps:{(float(self.frames) / self.time_elapsed()):.0f}", Vector2D(cursor, 0), ReadingWay.LEFT_RIGHT)
+                cursor += 1 + self.write(f"table:{self.total_char_table_len()}", Vector2D(cursor, 0), ReadingWay.LEFT_RIGHT)
+                cursor += 1 + self.write(f"x:{self.size.x}", Vector2D(cursor, 0), ReadingWay.LEFT_RIGHT)
+                cursor += 1 + self.write(f"y:{self.size.y}", Vector2D(cursor, 0), ReadingWay.LEFT_RIGHT)
+                cursor += 1 + self.write(f"n:{len(self.digital_rain)}", Vector2D(cursor, 0), ReadingWay.LEFT_RIGHT)
 
 
 
@@ -336,7 +366,7 @@ def main_test() -> None:
 	# (48, 49) binary.
 	# (32, 132) general.
     screen = Matrix(
-        frame_delay=0.08,
+        frame_delay=0.05,
         character_random_range=(32, 132),
         infos=True
     )
