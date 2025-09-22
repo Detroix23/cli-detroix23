@@ -6,6 +6,7 @@ Utilize the \r escape operator
 """
 
 import time
+import sys
 from enum import Enum
 
 class State(Enum):
@@ -40,7 +41,7 @@ class Animation:
 
         self.symbols: list[str] | str = symbols
 
-        self.max: int = maximum if maximum > 0 else 1
+        self.max: int = maximum
         self.span: int = span
         self.multiple: int = multiple
         self.empty: str = empty
@@ -80,6 +81,8 @@ class Bar(Animation):
             suffix,
             more_counters,
         )
+        # For Bar, ensure max > 0
+        self.max = self.max if self.max > 0 else 1
 
         
     def reset(self) -> None:
@@ -130,11 +133,14 @@ class Bar(Animation):
         template += f"{time_elapsed:.2f}s "
 
         template += self.suffix
+        template += "\r"
 
-        print(
+        # Hide cursor
+        sys.stdout.write('\x1b[?25l')
+        sys.stdout.write(
             template,
-            end="\r"
         )
+        sys.stdout.flush()
     
     def finish(self) -> None:
         """
@@ -145,6 +151,8 @@ class Bar(Animation):
             self._i = self.max
         
         self.state = State.FINISHED
+        # Show cursor again
+        sys.stdout.write('\x1b[?25h')
         self.increment(0)
 
 class Spinner(Animation):
@@ -242,10 +250,14 @@ class Spinner(Animation):
 
         template += self.suffix
 
-        print(
+        # Hide cursor
+        sys.stdout.write('\x1b[?25l')
+        sys.stdout.write(
             template,
-            end="\r"
         )
+        sys.stdout.flush()
+
+
     
     def __copy__(self) -> 'Spinner':
         copied: 'Spinner' = Spinner(
@@ -266,6 +278,8 @@ class Spinner(Animation):
             self._i = self.max
 
         self.state = State.FINISHED
+        # Show cursor again
+        sys.stdout.write('\x1b[?25h')
         self.increment(0)
 
 # Default
@@ -315,6 +329,7 @@ def run_spinners1() -> None:
         b.increment()
         time.sleep(0.1)
 
+    b.finish()
     print()
 
 def run_bars1() -> None:
@@ -325,6 +340,7 @@ def run_bars1() -> None:
         a.increment()
         time.sleep(0.1)
 
+    a.finish()
     print() 
 
 if __name__ == "__main__":

@@ -37,7 +37,7 @@ class Style:
         char_count: int = 0
         for i in range(range_min, range_max):
             text: str = f"Text {i}."
-            char_count += len(text)
+            char_count += len(text) + 2
             if char_count > size[0] and len(text) <= size[0]:
                 print()
                 char_count = 0

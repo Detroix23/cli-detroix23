@@ -87,7 +87,7 @@ class SelectMenu:
         try:
             # Hide cursor
             sys.stdout.write('\x1b[?25l')
-            
+
             self._draw_menu()
             
             while True:
@@ -111,12 +111,13 @@ class SelectMenu:
                     elif key == '\r':  # Enter
                         break
                     elif key == '\x03':  # Ctrl+C
-                        raise KeyboardInterrupt
+                        raise KeyboardInterrupt(f"{style.Color.YELLOW}(!) - Keyboard Interrupt. {style.END}")
                 
                 # Clear and redraw menu
                 self._clear_menu(len(self.options) + 1)
                 self._draw_menu()
-        
+        except KeyboardInterrupt:
+            raise KeyboardInterrupt(f"{style.Color.YELLOW}(!) - Keyboard Interrupt. {style.END}")
         finally:
             # Show cursor again
             sys.stdout.write('\x1b[?25h')

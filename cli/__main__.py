@@ -11,6 +11,8 @@ import base.models as models
 def main() -> None:
     print("# CLI module for Python, by Detroix23.")
     
+
+
     user_in: bool = True
     while user_in:
         main_select: select.SelectMenu = select.SelectMenu(
@@ -18,6 +20,7 @@ def main() -> None:
                 "Animations.Matrix",
                 "Base.Style", 
                 "Animations.Loadings",
+                "Base.Models",
                 "Quit",
             ],
             models.select_gh_style("Select widget.")
@@ -33,6 +36,14 @@ def main() -> None:
 
         if user_main_choice == "Animations.Loadings":
             loadings.main()
+
+        if user_main_choice == "Base.Models":
+            print(models.input_gh_style("What's your name ? I dont read it actually.", usage="asd", default="a"))
+            print(models.bool_gh_style("You sure ? But I dont care"))
+            print(models.select_gh_style("You know this one."))
+
+            print()
+
 
         elif user_main_choice == "Quit":
             style.printc("Quiting.", style=style.Color.YELLOW)
