@@ -34,20 +34,22 @@ class SelectMenu:
         Get a single keypress from stdin
         """
         if UNIX_LIKE:
-            fd = sys.stdin.fileno()
-            old_settings = termios.tcgetattr(fd)
+            fd: int = sys.stdin.fileno()
+            old_settings: termios._AttrReturn = termios.tcgetattr(fd)
             try:
                 tty.setraw(sys.stdin.fileno())
                 key = sys.stdin.read(1)
-                # Handle arrow keys (they send escape sequences)
-                if key == '\x1b':  # ESC sequence
+                # Handle arrow keys (escape sequences)
+                if key == '\x1b':
                     key += sys.stdin.read(2)
                 return key
             finally:
                 termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-        else:  # Windows
-            key = msvcrt.getch()
-            if key == b'\xe0':  # Special key prefix on Windows
+        # Windows
+        else:  
+            key: str = msvcrt.getch()
+            # Special key prefix on Windows
+            if key == b'\xe0':  
                 key += msvcrt.getch()
             return key.decode('utf-8', errors='ignore')
 
@@ -56,7 +58,8 @@ class SelectMenu:
         Clear the menu from terminal
         """
         for _ in range(num_lines):
-            sys.stdout.write('\x1b[1A\x1b[2K')  # Move up and clear line
+            # Move up and clear line
+            sys.stdout.write('\x1b[1A\x1b[2K')  
         sys.stdout.flush()
     
     def _draw_menu(self) -> None:
@@ -66,7 +69,11 @@ class SelectMenu:
         print(self.prompt)
         for i, option in enumerate(self.options):
             if i == self.selected_index:
-                print(f"{self.select_character}{option}")  # Highlight selected option
+                # Highlight selected option (style).
+                style.printc(
+                    f"{self.select_character}{option}",
+                    style=style.Color.CYAN + style.Text.BOLD
+                ) 
             else:
                 print(f"{' ' * len(self.select_character)}{option}")
         # sys.stdout.flush()
@@ -116,7 +123,8 @@ class SelectMenu:
             sys.stdout.flush()
         
         return self.options[self.selected_index]
-    
+
+
 def main() -> None:
     """
     File main.

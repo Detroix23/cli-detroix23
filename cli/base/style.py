@@ -3,14 +3,31 @@ CLI - Terminal
 style.py
 """
 
+# Shortcuts
 END: str = '\033[0m'
+DEFAULT: str = '\033[10m'
+OFF_BOLD: str = '\033[22m'
+OFF_ITALIC: str = '\033[23m'
+OFF_UNDERLINE: str = '\033[24m'
 
 class Style:
     """
     Color codes for the terminal, from the Select Graphic Rendition subset.
-    More info: https://stackoverflow.com/questions/4842424/list-of-ansi-color-escape-sequences.
+    More info: 
+        - https://stackoverflow.com/questions/4842424/list-of-ansi-color-escape-sequences.
+        - https://en.wikipedia.org/wiki/ANSI_escape_code
     """
     END: str = '\033[0m'
+    DEFAULT: str = '\033[10m'
+    OFF_BOLD: str = '\033[22m'
+    OFF_ITALIC: str = '\033[23m'
+    OFF_UNDERLINE: str = '\033[24m'
+    OFF_BLINK: str = '\033[25m'
+    OFF_INVERSE: str = '\033[27m'
+    OFF_CONCEAL: str = '\033[28m'
+    OFF_CROSS: str = '\033[29m'
+    OFF_FRAME: str = '\033[54m'
+    OFF_OVERLINE: str = '\033[55m'
 
     @staticmethod
     def display_all_rendition_subset(range_min: int = 0, range_max: int = 127) -> None:
@@ -35,12 +52,14 @@ class Text(Style):
 
 class Color(Style):
     """
-    Foreground text colors
+    Foreground text colors.
+    More info:
+        - https://github.com/termstandard/colors
     """
     DIM = '\033[2m'
     DIMMER = '\033[37m'
 
-
+    BLACK = '\033[30m'
     RED = '\033[31m'
     GREEN = '\033[32m'
     YELLOW = '\033[33m'
@@ -53,6 +72,8 @@ class Color(Style):
     LIGHT_OKBLUE = '\033[94m'
     LIGHT_MAGENTA = '\033[95m'
     LIGHT_CYAN = '\033[96m'
+    WHITE = '\033[97m'
+
 
 class Back(Style):
     """
@@ -88,8 +109,11 @@ def printc(message: str, style: str = "", end: str = "\n") -> None:
     
     return
 
-if __name__ == "__main__":
+def main() -> None:
     Style.display_all_rendition_subset()
 
     printc(f"█████████████", Color.DIM)
     printc(f"█████████████", Color.DIMMER)
+
+if __name__ == "__main__":
+    main()

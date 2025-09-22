@@ -361,9 +361,8 @@ class Matrix(Screen):
 
 
 
-
-def main() -> None:
-	# (48, 49) binary.
+def run_matrix() -> None:
+    # (48, 49) binary.
 	# (32, 132) general.
     screen = Matrix(
         frame_delay=0.05,
@@ -371,6 +370,10 @@ def main() -> None:
         infos=True
     )
     screen.run(Matrix.updater, Matrix.drawer)
+
+def main() -> None:
+	run_matrix()
+
 
 if __name__ == "__main__":
     main()
