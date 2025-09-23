@@ -1,10 +1,30 @@
-# Venv
-/venv
-/.venv
+[project]
+name = "new_detroix23"
+version = "0.0.1"
+description = "New project."
+authors = [
+    { name="Detroix23", email="detroix23@gmail.com" }
+]
+readme = "README.md"
+requires-python = ">=3.12"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Natural Language :: English",
+]
+dependencies = [
+]
+license = "CC-BY-4.0"
+license-files = [
+    "LICENSE.md"
+]
 
-# Python
-**.pyc
-*/__pycache__
+[project.urls]
+Repository = "https://github.com/Detroix23"
 
-# Doc
-!README.md
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = []
