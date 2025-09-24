@@ -1,0 +1,7 @@
+LICENSE.md
+README.md
+pyproject.toml
+CLI_Detroix23.egg-info/PKG-INFO
+CLI_Detroix23.egg-info/SOURCES.txt
+CLI_Detroix23.egg-info/dependency_links.txt
+CLI_Detroix23.egg-info/top_level.txt
