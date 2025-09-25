@@ -11,20 +11,10 @@ import random
 from typing import Callable
 from enum import Enum
 
+import maths.maths as maths
 import base.style as style
 
-class Vector2D:
-    x: int
-    y: int
-    def __init__(self, x: int = 0, y: int = 0) -> None:
-        self.x: int = x
-        self.y: int = y
 
-    def __repr__(self) -> str:
-        return f"Vector2D(x: int = {self.x}, y: int = {self.y})"
-
-    def __str__(self) -> str:
-        return f"x: {self.x}, y: {self.y} "
 
 class ReadingWay(Enum):
     LEFT_RIGHT = 0
@@ -33,7 +23,7 @@ class ReadingWay(Enum):
     DOWN_UP = 3
 
 class Screen:
-    size: Vector2D
+    size: maths.Vector2D
     updater: Callable[..., None] | None
     drawer: Callable[..., None] | None
     _frames: int
@@ -47,7 +37,7 @@ class Screen:
         debug: bool = False,
         deactivate_screen: bool = False
     ) -> None:
-        self.size: Vector2D = Vector2D(*self.update_size())
+        self.size: maths.Vector2D = maths.Vector2D(*self.update_size())
         self.updater: Callable[..., None] | None = None
         self.drawer: Callable[..., None] | None = None
         self._frames: int = 0
@@ -86,7 +76,7 @@ class Screen:
 
 
                 # Update.
-                self.size: Vector2D = Vector2D(*self.update_size())
+                self.size: maths.Vector2D = maths.Vector2D(*self.update_size())
 
                 # User functions.
                 self.updater(self)
@@ -133,7 +123,7 @@ class Screen:
             for _ in range(self.size.y)
         ]
 
-    def _write_char(self, char: str, position: Vector2D, styles: str = "") -> None:
+    def _write_char(self, char: str, position: maths.Vector2D, styles: str = "") -> None:
         """
         Add a character (len == 1) and its position to the next printed table.
         (0, 0) is the upper left corner.
@@ -153,7 +143,7 @@ class Screen:
             if warn_on_outside:
                 style.printc(f"(!) - Character {char} ignored at {position}.", style.Color.YELLOW)
 
-    def write(self, message: str | list[str], start: Vector2D, way: ReadingWay = ReadingWay.LEFT_RIGHT, styles: str = "") -> int:
+    def write(self, message: str | list[str], start: maths.Vector2D, way: ReadingWay = ReadingWay.LEFT_RIGHT, styles: str = "") -> int:
         """
         Write whole words in the char table.
         Follow the reading `way`.
@@ -166,15 +156,15 @@ class Screen:
         elif len(message) == 1 and isinstance(message, list):
             self._write_char(message[0], start, styles)
         else:
-            shift: Vector2D
+            shift: maths.Vector2D
             if way == ReadingWay.LEFT_RIGHT:
-                shift = Vector2D(1, 0)
+                shift = maths.Vector2D(1, 0)
             elif way == ReadingWay.RIGHT_LEFT:
-                shift = Vector2D(-1, 0)
+                shift = maths.Vector2D(-1, 0)
             elif way == ReadingWay.DOWN_UP:
-                shift = Vector2D(0, -1)
+                shift = maths.Vector2D(0, -1)
             elif way == ReadingWay.UP_DOWN:
-                shift = Vector2D(0, 1)
+                shift = maths.Vector2D(0, 1)
             else:
                 raise ValueError(f"{style.Color.RED}(X) - Must be a valid direction (0 - 3): {way}.{style.Style.END}")
 
@@ -182,7 +172,7 @@ class Screen:
                 for index, letter in enumerate(message):
                     self._write_char(
                         letter,
-                        Vector2D(
+                        maths.Vector2D(
                             start.x + index * shift.x,
                             start.y + index * shift.y
                         ),
@@ -194,7 +184,7 @@ class Screen:
                     # print(f"\nc: {composition}", end="")
                     self._write_char(
                         composition,
-                        Vector2D(
+                        maths.Vector2D(
                             start.x + index * shift.x,
                             start.y + index * shift.y
                         ),
@@ -242,14 +232,14 @@ class Custom1(Screen):
 
 class Dropplet:
     char: str
-    position: Vector2D
+    position: maths.Vector2D
     last_chars: list[str]
     frames_to_move: int
 
     def __init__(self, screen: 'Matrix') -> None:
         self.screen: 'Matrix' = screen
         self.char: str = self._random_char(*self.screen.character_random_range)
-        self.position: Vector2D = self._random_position(self.screen)
+        self.position: maths.Vector2D = self._random_position(self.screen)
         self.last_chars: list[str] = []
         self.frames_to_move: int = random.randint(1, 1)
 
@@ -261,8 +251,8 @@ class Dropplet:
             r = 42
         return chr(r)
 
-    def _random_position(self, screen: Screen) -> Vector2D:
-        return Vector2D(random.randint(0, screen.size.x), 0)
+    def _random_position(self, screen: Screen) -> maths.Vector2D:
+        return maths.Vector2D(random.randint(0, screen.size.x), 0)
 
     def update(self) -> None:
         """
@@ -321,7 +311,10 @@ class Matrix(Screen):
             Return time elapsed from start time to now.
             Float and using time.monotonic().
             """
-            return time.monotonic() - self.start_time
+            d = time.monotonic() - self.start_time
+            if d > 0:
+                return d
+            return 1
 
 
         def updater(self) -> None:
@@ -353,11 +346,11 @@ class Matrix(Screen):
 
             # Infos.
             if self.infos:
-                cursor += 1 + self.write(f"fps:{(float(self.frames) / self.time_elapsed()):.0f}", Vector2D(cursor, 0), ReadingWay.LEFT_RIGHT)
-                cursor += 1 + self.write(f"table:{self.total_char_table_len()}", Vector2D(cursor, 0), ReadingWay.LEFT_RIGHT)
-                cursor += 1 + self.write(f"x:{self.size.x}", Vector2D(cursor, 0), ReadingWay.LEFT_RIGHT)
-                cursor += 1 + self.write(f"y:{self.size.y}", Vector2D(cursor, 0), ReadingWay.LEFT_RIGHT)
-                cursor += 1 + self.write(f"n:{len(self.digital_rain)}", Vector2D(cursor, 0), ReadingWay.LEFT_RIGHT)
+                cursor += 1 + self.write(f"fps:{(float(self.frames) / self.time_elapsed()):.0f}", maths.Vector2D(cursor, 0), ReadingWay.LEFT_RIGHT)
+                cursor += 1 + self.write(f"table:{self.total_char_table_len()}", maths.Vector2D(cursor, 0), ReadingWay.LEFT_RIGHT)
+                cursor += 1 + self.write(f"x:{self.size.x}", maths.Vector2D(cursor, 0), ReadingWay.LEFT_RIGHT)
+                cursor += 1 + self.write(f"y:{self.size.y}", maths.Vector2D(cursor, 0), ReadingWay.LEFT_RIGHT)
+                cursor += 1 + self.write(f"n:{len(self.digital_rain)}",maths. Vector2D(cursor, 0), ReadingWay.LEFT_RIGHT)
 
 
 
@@ -369,6 +362,7 @@ def run_matrix() -> None:
         character_random_range=(32, 132),
         infos=True
     )
+    
     screen.run(Matrix.updater, Matrix.drawer)
 
 def main() -> None:
