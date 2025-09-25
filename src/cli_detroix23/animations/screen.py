@@ -22,7 +22,7 @@ class ReadingWay(Enum):
     DOWN_UP = 3
 
 class Screen:
-    size: maths.Vector2D
+    size: maths.Size
     updater: Callable[..., None] | None
     drawer: Callable[..., None] | None
     _frames: int
@@ -36,7 +36,7 @@ class Screen:
         debug: bool = False,
         deactivate_screen: bool = False
     ) -> None:
-        self.size: maths.Vector2D = maths.Vector2D(*self.update_size())
+        self.size: maths.Size = maths.Size(*self.update_size())
         self.updater: Callable[..., None] | None = None
         self.drawer: Callable[..., None] | None = None
         self._frames: int = 0
@@ -76,7 +76,7 @@ class Screen:
 
 
                 # Update.
-                self.size: maths.Vector2D = maths.Vector2D(*self.update_size())
+                self.size = maths.Size(*self.update_size())
 
                 # User functions.
                 self.updater(self)
@@ -126,7 +126,7 @@ class Screen:
 
     def clear_char(self, position: maths.Vector2D) -> None:
         try:
-            self.char_table[position.y][position.x] = ' '
+            self.char_table[int(position.y)][int(position.x)] = ' '
         except IndexError:
             style.printc(f"(!) - Couldn't erase character at {position}: inexistant.", style.Color.YELLOW)
 
@@ -152,9 +152,9 @@ class Screen:
 
         try:
             if styles:
-                self.char_table[position.y][position.x] = styles + char + style.Style.END
+                self.char_table[int(position.y)][int(position.x)] = styles + char + style.Style.END
             else:
-                self.char_table[position.y][position.x] = char
+                self.char_table[int(position.y)][int(position.x)] = char
         except IndexError:
             if warn_on_outside:
                 style.printc(f"(!) - Character {char} ignored at {position}.", style.Color.YELLOW)
@@ -226,7 +226,7 @@ class Screen:
         Printed in one time for the sake of smoothness, 
         and only if the char table is different or the window size.
         """
-        if self.char_table != self.previous_char_table or self.size != maths.Vector2D.terminal_size():
+        if self.char_table != self.previous_char_table or self.size != maths.Size.terminal_size():
             table: str = ""
             self.char_table[-1].pop()
             for records in self.char_table:

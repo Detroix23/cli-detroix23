@@ -47,23 +47,58 @@ class Shape:
 
 
 class Rectangle(Shape):
-    size: maths.Vector2D
+    size: maths.Size
     fill: str
 
     def __init__(
         self, 
         position: maths.Vector2D,
-        size: maths.Vector2D,
+        size: maths.Size,
         fill: str
     ) -> None:
         super().__init__(position)
-        self.size: maths.Vector2D = size
+        self.size: maths.Size = size
         self.fill: str = fill
     
     def draw(self) -> list[list[str]]:
         return [[self.fill] * self.size.x] * self.size.y
 
 
+class RectangleHollow(Shape):
+    size: maths.Size
+    fill: str
+    border_size: int
+
+    def __init__(
+        self, 
+        position: maths.Vector2D,
+        size: maths.Size,
+        fill: str,
+        border_size: int,
+    ) -> None:
+        if border_size < 0:
+            raise ValueError(f"(X) - The border size must be 0 (filled) or more ({border_size}).")
+
+        super().__init__(position)
+        self.size = size
+        self.fill: str = fill
+        self.border_size: int = border_size
+    
+    def draw(self) -> list[list[str]]:
+        if self.border_size == 0:
+            return [[self.fill] * self.size.x] * self.size.y
+        else:
+            table: list[list[str]] = list()
+            for y in range(self.size.y):
+                if self.border_size <= y < self.size.y - self.border_size:
+                    table.append(
+                        [self.fill] * self.border_size + [''] * (self.size.x - 2 * self.border_size) + [self.fill] * self.border_size
+                    )
+                else:
+                    table.append([self.fill] * self.size.x)
+        
+            return table
+                    
 
 # Exemples
 class Exemple1(screen.Screen):
@@ -77,10 +112,12 @@ class Exemple1(screen.Screen):
     ) -> None:
         super().__init__(void_char, frame_delay, global_style, debug, deactivate_screen)
 
-        self.rect1 = Rectangle(maths.Vector2D(4, 5), maths.Vector2D(8, 4), '#')
+        self.rect1 = Rectangle(maths.Vector2D(4, 5), maths.Size(8, 4), '#')
+        self.hrect1 = RectangleHollow(maths.Vector2D(7, 8), maths.Size(9, 6), '@', 2)
 
     def drawer(self) -> None:
         self.write_table(self.rect1.draw(), self.rect1.position)
+        self.write_table(self.hrect1.draw(), self.hrect1.position)
 
     def updater(self) -> None:
         pass
