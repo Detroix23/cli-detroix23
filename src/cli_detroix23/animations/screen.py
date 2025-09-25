@@ -48,6 +48,7 @@ class Screen:
         self.global_style: str = global_style
 
         self.char_table: list[list[str]] = self.blank_char_table()
+        self.previous_char_table: list[list[str]] = self.blank_char_table()
 
 
     def run(
@@ -86,6 +87,7 @@ class Screen:
                     print(fr"{self.char_table}")
                 if not (self.debug or self.deactivate_screen):
                     self.print_char_table()
+                self.previous_char_table = self.char_table
                 self.char_table = self.blank_char_table()
                 sys.stdout.flush()
                 
@@ -100,7 +102,7 @@ class Screen:
 
 
     def update_size(self) -> tuple[int, int]:
-        size: tuple[int, ...] = tuple(os.get_terminal_size())
+        size: tuple[int, int] = os.get_terminal_size()
         return size[0], size[1]
 
     @property
@@ -221,15 +223,17 @@ class Screen:
     def print_char_table(self) -> None:
         """
         When all chars are written, print the table that covers the whole screen.
-        Printed in one time for the sake of smoothness.
+        Printed in one time for the sake of smoothness, 
+        and only if the char table is different or the window size.
         """
-        table: str = ""
-        self.char_table[-1].pop()
-        for records in self.char_table:
-            for char in records:
-                table += self.global_style + char + style.END
-            table += "\n"
-        sys.stdout.write(table[:-5])
+        if self.char_table != self.previous_char_table or self.size != maths.Vector2D.terminal_size():
+            table: str = ""
+            self.char_table[-1].pop()
+            for records in self.char_table:
+                for char in records:
+                    table += self.global_style + char + style.END
+                table += "\n"
+            sys.stdout.write(table[:-5])
 
     def total_char_table_len(self) -> int:
         total: int = 0

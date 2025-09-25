@@ -77,7 +77,7 @@ class Exemple1(screen.Screen):
     ) -> None:
         super().__init__(void_char, frame_delay, global_style, debug, deactivate_screen)
 
-        self.rect1 = Rectangle(maths.Vector2D(4, 2), maths.Vector2D(8, 4), '#')
+        self.rect1 = Rectangle(maths.Vector2D(4, 5), maths.Vector2D(8, 4), '#')
 
     def drawer(self) -> None:
         self.write_table(self.rect1.draw(), self.rect1.position)

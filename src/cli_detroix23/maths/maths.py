@@ -3,6 +3,7 @@ CLI - maths
 maths.py
 Basic maths stuff.
 """
+import os
 
 class Vector2D:
     x: int
@@ -23,3 +24,17 @@ class Vector2D:
             self.x,
             self.y
         )
+    
+    @staticmethod
+    def terminal_size() -> 'Vector2D':
+        size: tuple[int, int] = os.get_terminal_size()
+        return Vector2D(
+            size[0],
+            size[1]
+        )
+
+    def __eq__(self, target: object) -> bool:
+        if isinstance(target, Vector2D):
+            return self.x == target.x and self.y == target.y
+        else:
+            return False
