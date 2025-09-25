@@ -17,3 +17,9 @@ class Vector2D:
 
     def __str__(self) -> str:
         return f"x: {self.x}, y: {self.y} "
+
+    def clone(self) -> 'Vector2D':
+        return Vector2D(
+            self.x,
+            self.y
+        )

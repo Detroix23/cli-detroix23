@@ -7,7 +7,6 @@ Multi-line updating terminal display.
 import os
 import sys
 import time
-import random
 from typing import Callable
 from enum import Enum
 
@@ -123,6 +122,12 @@ class Screen:
             for _ in range(self.size.y)
         ]
 
+    def clear_char(self, position: maths.Vector2D) -> None:
+        try:
+            self.char_table[position.y][position.x] = ' '
+        except IndexError:
+            style.printc(f"(!) - Couldn't erase character at {position}: inexistant.", style.Color.YELLOW)
+
     def _write_char(self, char: str, position: maths.Vector2D, styles: str = "") -> None:
         """
         Add a character (len == 1) and its position to the next printed table.
@@ -130,16 +135,25 @@ class Screen:
         """
         raise_on_long_char: bool = False
         warn_on_outside: bool = self.debug
+        allow_negative_index: bool = False
 
         if len(char) > 1 and raise_on_long_char:
             raise ValueError(f"{style.Color.RED}(X) - Must be a char: {char}, ({len(char)}).{style.Style.END}")
+        if not char:
+            # Don't do anything is the char is the empty string.
+            # To erase, use `clear_char`.
+            return
+        if (position.x < 0 or position.y < 0) and not allow_negative_index:
+            if warn_on_outside:
+                style.printc(f"(!) - Character {char} ignored at negative position: {position}.", style.Color.YELLOW)
+            return
+
         try:
             if styles:
                 self.char_table[position.y][position.x] = styles + char + style.Style.END
             else:
                 self.char_table[position.y][position.x] = char
-
-        except:
+        except IndexError:
             if warn_on_outside:
                 style.printc(f"(!) - Character {char} ignored at {position}.", style.Color.YELLOW)
 
@@ -193,6 +207,17 @@ class Screen:
         
         return len(message)
 
+    def write_table(self, table: list[list[str]], position: maths.Vector2D, way: ReadingWay = ReadingWay.LEFT_RIGHT, styles: str = "") -> None:
+        """
+        Write a whole 2D table to the char table from the top-left corner, starting on position.
+        """
+        cursor_position: maths.Vector2D = position.clone()
+        for row in table:
+            self.write(row, cursor_position, way, styles)
+            cursor_position.y -= 1
+        
+
+
     def print_char_table(self) -> None:
         """
         When all chars are written, print the table that covers the whole screen.
@@ -214,161 +239,5 @@ class Screen:
         return total
 
 
-class Custom1(Screen):
-        def __init__(self) -> None:
-            super().__init__()
-            self.hello: int = 0
-
-        def updater(self) -> None:
-            if str(self.frames)[0] == "0": 
-                self.hello += 1 
-            self.hello -= 1
-
-        def drawer(self) -> None:
-            print(self.size)
-            print(self.frames)
-            print(self.hello)
-
-
-class Dropplet:
-    char: str
-    position: maths.Vector2D
-    last_chars: list[str]
-    frames_to_move: int
-
-    def __init__(self, screen: 'Matrix') -> None:
-        self.screen: 'Matrix' = screen
-        self.char: str = self._random_char(*self.screen.character_random_range)
-        self.position: maths.Vector2D = self._random_position(self.screen)
-        self.last_chars: list[str] = []
-        self.frames_to_move: int = random.randint(1, 1)
-
-    def _random_char(self, random_min: int, random_max: int) -> str:
-        r: int = 0
-        blacklist: list[int] = [0, 24, 47, 97, 127, 128, 129, 130, 131, 132, 133, 141, 143, 144, 149, 151, 157, 160, 168, 173, 175, 180, 184]
-        r = random.randint(random_min, random_max)
-        if r in blacklist:
-            r = 42
-        return chr(r)
-
-    def _random_position(self, screen: Screen) -> maths.Vector2D:
-        return maths.Vector2D(random.randint(0, screen.size.x), 0)
-
-    def update(self) -> None:
-        """
-        Update the dropplet. Apply gravity.
-        """
-        # Move, if enough frames.
-        if self.screen.frames % self.frames_to_move == 0:
-            # Update tail.
-            self.last_chars.insert(0, self.char)
-            if len(self.last_chars) > random.randint(5, 10):
-                self.last_chars.pop()
-
-            # Move 1 tile.
-            self.position.y += 1
-            self.char = self._random_char(*self.screen.character_random_range)
-
-    def full_tail(self) -> list[str]:
-        """
-        Return the string list of all character (current and tail's) formated.
-        """
-        tail: list[str] = [f"{style.Text.BOLD}{self.char}{style.END}"]
-        for index, char in enumerate(self.last_chars):
-            if index < len(self.last_chars) // 2:
-                tail.append(f"{style.Color.LIGHT_GREEN}{char}{style.END}")
-            else:
-                tail.append(f"{style.Color.GREEN}{char}{style.END}")
-
-        return tail
-
-class Matrix(Screen):
-        digital_rain: list[Dropplet]
-        character_random_range: tuple[int, int]
-        infos: bool
-        start_time: float
-
-        def __init__(
-            self,
-            frame_delay: float,
-            character_random_range: tuple[int, int] = (40, 127),
-            infos: bool = False
-        ) -> None:
-            super().__init__(
-                frame_delay=frame_delay,
-                void_char=" ",
-                global_style=style.Back.BLACK,
-                debug=False,
-                deactivate_screen=False
-            )
-            self.digital_rain: list[Dropplet] = list()
-            self.character_random_range: tuple[int, int] = character_random_range
-            self.infos: bool = infos
-            self.start_time: float = time.monotonic()
-        
-        def time_elapsed(self) -> float:
-            """
-            Return time elapsed from start time to now.
-            Float and using time.monotonic().
-            """
-            d = time.monotonic() - self.start_time
-            if d > 0:
-                return d
-            return 1
-
-
-        def updater(self) -> None:
-            # New dropplet
-            for _ in range(self.size.x // 50 + 1):
-                self.digital_rain.append(Dropplet(self))
-
-            # Update each existing dropplet
-            new_rain: list[Dropplet] = list()
-            for dropplet in self.digital_rain:
-                dropplet.update()
-                if dropplet.position.y - len(dropplet.last_chars) <= self.size.y:
-                    new_rain.append(dropplet)
-            
-            self.digital_rain = new_rain
-
-            # Prevent eventual overflow
-            time_of_reset: float = 600
-            if self.time_elapsed() > time_of_reset:
-                self.start_time = time.monotonic()
-                self.frames_reset()
-
-
-        def drawer(self) -> None:
-            cursor: int = 1
-            # Draw each existing dropplets.
-            for dropplet in self.digital_rain:
-                self.write(dropplet.full_tail(), dropplet.position, ReadingWay.DOWN_UP)
-
-            # Infos.
-            if self.infos:
-                cursor += 1 + self.write(f"fps:{(float(self.frames) / self.time_elapsed()):.0f}", maths.Vector2D(cursor, 0), ReadingWay.LEFT_RIGHT)
-                cursor += 1 + self.write(f"table:{self.total_char_table_len()}", maths.Vector2D(cursor, 0), ReadingWay.LEFT_RIGHT)
-                cursor += 1 + self.write(f"x:{self.size.x}", maths.Vector2D(cursor, 0), ReadingWay.LEFT_RIGHT)
-                cursor += 1 + self.write(f"y:{self.size.y}", maths.Vector2D(cursor, 0), ReadingWay.LEFT_RIGHT)
-                cursor += 1 + self.write(f"n:{len(self.digital_rain)}",maths. Vector2D(cursor, 0), ReadingWay.LEFT_RIGHT)
-
-
-
-def run_matrix() -> None:
-    # (48, 49) binary.
-	# (32, 132) general.
-    screen = Matrix(
-        frame_delay=0.05,
-        character_random_range=(32, 132),
-        infos=True
-    )
-    
-    screen.run(Matrix.updater, Matrix.drawer)
-
-def main() -> None:
-	run_matrix()
-
-
 if __name__ == "__main__":
-    main()
-    
+    print("See `animations/exemples.py`.")
