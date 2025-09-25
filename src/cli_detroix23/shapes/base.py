@@ -31,13 +31,16 @@ class Shape:
     """
     position: maths.Vector2D
     id: int
+    support: screen.Screen
+    size: maths.Size
 
-    def __init__(self, position: maths.Vector2D) -> None:
+    def __init__(self, support: screen.Screen, position: maths.Vector2D, size: maths.Size) -> None:
         """
         Initialize an instance of a shape.
         """
-        self.position: maths.Vector2D = position
-        self.id: int = 0
+        self.position = position
+        self.id = 0
+        self.support = support
 
     def draw(self) -> list[list[str]]:
         """
@@ -45,18 +48,32 @@ class Shape:
         """
         raise DrawError("The `Shape` doesn't implement any draw content.")
 
+    def shift(self, step: maths.Vector2D, loop: bool = True) -> None:
+        """
+        Shift the position.
+        """
+        self.position.x += step.x
+        self.position.y += step.y
+        if loop:
+            self.loop_position()
+
+
+    def loop_position(self) -> None:
+        self.position.x %= self.support.size.x + self.size.x
+        self.position.y %= self.support.size.y + self.size.y
+
 
 class Rectangle(Shape):
-    size: maths.Size
     fill: str
 
     def __init__(
         self, 
+        support: screen.Screen,
         position: maths.Vector2D,
         size: maths.Size,
         fill: str
     ) -> None:
-        super().__init__(position)
+        super().__init__(support, position, size)
         self.size: maths.Size = size
         self.fill: str = fill
     
@@ -65,12 +82,12 @@ class Rectangle(Shape):
 
 
 class RectangleHollow(Shape):
-    size: maths.Size
     fill: str
     border_size: int
 
     def __init__(
-        self, 
+        self,
+        support: screen.Screen,
         position: maths.Vector2D,
         size: maths.Size,
         fill: str,
@@ -79,7 +96,7 @@ class RectangleHollow(Shape):
         if border_size < 0:
             raise ValueError(f"(X) - The border size must be 0 (filled) or more ({border_size}).")
 
-        super().__init__(position)
+        super().__init__(support, position, size)
         self.size = size
         self.fill: str = fill
         self.border_size: int = border_size
@@ -104,23 +121,23 @@ class RectangleHollow(Shape):
 class Exemple1(screen.Screen):
     def __init__(
         self, 
-        void_char: str = ".", 
-        frame_delay: float = 0.1, 
+        void_char: str = "'", 
+        frame_delay: float = 0.3, 
         global_style: str = "", 
         debug: bool = False, 
         deactivate_screen: bool = False
     ) -> None:
         super().__init__(void_char, frame_delay, global_style, debug, deactivate_screen)
 
-        self.rect1 = Rectangle(maths.Vector2D(4, 5), maths.Size(8, 4), '#')
-        self.hrect1 = RectangleHollow(maths.Vector2D(7, 8), maths.Size(9, 6), '@', 2)
+        self.rect1 = Rectangle(self, maths.Vector2D(4, 5), maths.Size(8, 4), '#')
+        self.hrect1 = RectangleHollow(self, maths.Vector2D(7, 8), maths.Size(9, 6), '@', 2)
 
     def drawer(self) -> None:
         self.write_table(self.rect1.draw(), self.rect1.position)
         self.write_table(self.hrect1.draw(), self.hrect1.position)
 
     def updater(self) -> None:
-        pass
+        self.hrect1.shift(maths.Vector2D(0, 1))
 
 def run_exemple1() -> None:
     ex1 = Exemple1()
@@ -129,5 +146,3 @@ def run_exemple1() -> None:
 
 if __name__ == "__main__":
     run_exemple1()
-
-
