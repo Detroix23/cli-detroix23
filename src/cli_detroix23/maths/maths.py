@@ -70,3 +70,16 @@ class Vector2D:
             return self.x == target.x and self.y == target.y
         else:
             return False
+        
+
+def both_range(number: int) -> list[int]:
+    """
+    Return a list of all naturals from -number to number
+    """
+    return [i - number for i in range(2 * number)]
+
+def middle_range(number: int) -> list[int]:
+    """
+    Return a list of all naturals from -number / 2 to number / 2 
+    """
+    return [i - number // 2 for i in range(number)]
