@@ -8,6 +8,7 @@ Utilize the \r escape operator
 import time
 import sys
 from enum import Enum
+from typing import Union
 
 class State(Enum):
     READY = 0
@@ -25,7 +26,7 @@ class Animation:
 
     def __init__(
         self,
-        symbols: list[str] | str,
+        symbols: Union[list[str], str],
         maximum: int,
         span: int = 1, 
         multiple: int = 1,
@@ -39,7 +40,7 @@ class Animation:
         self.first_time: float = 0
         self.state: State = State.READY
 
-        self.symbols: list[str] | str = symbols
+        self.symbols: Union[list[str], str] = symbols
 
         self.max: int = maximum
         self.span: int = span
@@ -161,7 +162,7 @@ class Spinner(Animation):
     """
     def __init__(
         self, 
-        symbols: list[str] | str, 
+        symbols: Union[list[str], str], 
         maximum: int = 0,
         *, span: int = 1, 
         multiple: int = 1,
@@ -183,7 +184,7 @@ class Spinner(Animation):
             more_counters,
         )
 
-    def more_counters(self, more_counters: list[str] | str) -> None:
+    def more_counters(self, more_counters: Union[list[str], str]) -> None:
         """
         Define more counter, after initialization.
         """

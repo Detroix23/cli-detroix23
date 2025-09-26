@@ -7,7 +7,7 @@ Multi-line updating terminal display.
 import os
 import sys
 import time
-from typing import Callable
+from typing import Callable, Union, Optional
 from enum import Enum
 
 import maths.maths as maths
@@ -23,8 +23,8 @@ class ReadingWay(Enum):
 
 class Screen:
     size: maths.Size
-    updater: Callable[..., None] | None
-    drawer: Callable[..., None] | None
+    updater: Optional[Callable[..., None]]
+    drawer: Optional[Callable[..., None]]
     _frames: int
     char_table: list[list[str]]
 
@@ -37,8 +37,8 @@ class Screen:
         deactivate_screen: bool = False
     ) -> None:
         self.size: maths.Size = maths.Size(*self.update_size())
-        self.updater: Callable[..., None] | None = None
-        self.drawer: Callable[..., None] | None = None
+        self.updater: Optional[Callable[..., None]] = None
+        self.drawer: Optional[Callable[..., None]] = None
         self._frames: int = 0
         self.debug: bool = debug
         self.deactivate_screen: bool = deactivate_screen
@@ -159,7 +159,7 @@ class Screen:
             if warn_on_outside:
                 style.printc(f"(!) - Character {char} ignored at {position}.", style.Color.YELLOW)
 
-    def write(self, message: str | list[str], start: maths.Vector2D, way: ReadingWay = ReadingWay.LEFT_RIGHT, styles: str = "") -> int:
+    def write(self, message: Union[str, list[str]], start: maths.Vector2D, way: ReadingWay = ReadingWay.LEFT_RIGHT, styles: str = "") -> int:
         """
         Write whole words in the char table.
         Follow the reading `way`.

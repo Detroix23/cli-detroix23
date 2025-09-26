@@ -5,6 +5,7 @@ inputs.py
 
 import os
 import pathlib as path
+from typing import Union, Optional
 
 symbol_mode: dict[str, list[str]] = {
         "1": ["1", "en", "encode", "enc"],
@@ -36,8 +37,8 @@ def list_directory(directory: path.Path) -> None:
 
 def input(
     message: str,
-    symbols: dict[str, list[str]] | list[str] | None = None,
-    default: int | None = None,
+    symbols: Union[dict[str, list[str]], list[str], None] = None,
+    default: Optional[int] = None,
     must_validate: bool = True,
     allowed_type: type = str,
     error_message: str = "(!) - Incorrect input. Please try again.",
@@ -54,7 +55,7 @@ def input(
     `Default` is the index of the default key of the allowed list.
     """
     valid: bool = False
-    true_response: str | None = None 
+    true_response: Optional[str] = None 
     i: int = 0
     if isinstance(symbols, list):
         symbols = {symbol: [symbol] for symbol in symbols}
@@ -106,7 +107,7 @@ def boolean_input(
     `Default` is the value returned in case the user just presses Enter.
     """
     valid: bool = False
-    true_response: bool | None = None 
+    true_response: Optional[bool] = None 
     i: int = 0
     symbols: dict[bool, list[str]] = {
         False: ["No", "NO", "no", "n", "N"],
