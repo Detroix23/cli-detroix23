@@ -23,7 +23,7 @@ class Dropplet:
         self.char: str = self._random_char(*self.screen.character_random_range)
         self.position: maths.Vector2D = self._random_position(self.screen)
         self.last_chars: list[str] = []
-        self.frames_to_move: int = random.randint(1, 1)
+        self.frames_to_move: int = int(1 / self.screen.frame_delay) // 10
 
     def _random_char(self, random_min: int, random_max: int) -> str:
         r: int = 0
@@ -101,7 +101,10 @@ class Matrix(screen.Screen):
 
         def updater(self) -> None:
             # New dropplet
-            for _ in range(self.size.x // 50 + 1):
+            dropplet_quantity: int = (self.size.x // (45 + int(1 / self.frame_delay) // 10))
+            if dropplet_quantity == 0:
+                dropplet_quantity = 1
+            for _ in range(dropplet_quantity):
                 self.digital_rain.append(Dropplet(self))
 
             # Update each existing dropplet
@@ -140,7 +143,7 @@ def run_matrix() -> None:
     # (48, 49) binary.
 	# (32, 132) general.
     screen = Matrix(
-        frame_delay=0.05,
+        frame_delay=1/27,
         character_random_range=(32, 132),
         infos=True
     )

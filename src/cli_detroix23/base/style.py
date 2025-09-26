@@ -2,15 +2,18 @@
 CLI - Terminal
 style.py
 """
-
 import os
 
+
+# Escape character. \033, \x1b
+ESC: str = "\x1b"
+
 # Shortcuts
-END: str = '\033[0m'
-DEFAULT: str = '\033[10m'
-OFF_BOLD: str = '\033[22m'
-OFF_ITALIC: str = '\033[23m'
-OFF_UNDERLINE: str = '\033[24m'
+END: str = ESC + '[0m'
+DEFAULT: str = ESC + '[10m'
+OFF_BOLD: str = ESC + '[22m'
+OFF_ITALIC: str = ESC + '[23m'
+OFF_UNDERLINE: str = ESC + '[24m'
 
 class Style:
     """
@@ -19,17 +22,17 @@ class Style:
         - https://stackoverflow.com/questions/4842424/list-of-ansi-color-escape-sequences.
         - https://en.wikipedia.org/wiki/ANSI_escape_code
     """
-    END: str = '\033[0m'
-    DEFAULT: str = '\033[10m'
-    OFF_BOLD: str = '\033[22m'
-    OFF_ITALIC: str = '\033[23m'
-    OFF_UNDERLINE: str = '\033[24m'
-    OFF_BLINK: str = '\033[25m'
-    OFF_INVERSE: str = '\033[27m'
-    OFF_CONCEAL: str = '\033[28m'
-    OFF_CROSS: str = '\033[29m'
-    OFF_FRAME: str = '\033[54m'
-    OFF_OVERLINE: str = '\033[55m'
+    END: str = ESC + '[0m'
+    DEFAULT: str = ESC + '[10m'
+    OFF_BOLD: str = ESC + '[22m'
+    OFF_ITALIC: str = ESC + '[23m'
+    OFF_UNDERLINE: str = ESC + '[24m'
+    OFF_BLINK: str = ESC + '[25m'
+    OFF_INVERSE: str = ESC + '[27m'
+    OFF_CONCEAL: str = ESC + '[28m'
+    OFF_CROSS: str = ESC + '[29m'
+    OFF_FRAME: str = ESC + '[54m'
+    OFF_OVERLINE: str = ESC + '[55m'
 
     @staticmethod
     def display_all_rendition_subset(range_min: int = 0, range_max: int = 127) -> None:
@@ -49,14 +52,14 @@ class Text(Style):
     """
     Text weight and style.
     """
-    BOLD = '\033[1m'
-    ITALIC = '\033[3m'
-    UNDERLINE = '\033[4m'
-    BLINK = '\033[5m'
-    BLINK2 = '\033[6m'
-    INVISIBLE = '\033[8m'
-    THROUGHT = '\033[9m'
-    DOUBLE_UNDERLINE = '\033[21m'
+    BOLD = ESC + '[1m'
+    ITALIC = ESC + '[3m'
+    UNDERLINE = ESC + '[4m'
+    BLINK = ESC + '[5m'
+    BLINK2 = ESC + '[6m'
+    INVISIBLE = ESC + '[8m'
+    THROUGHT = ESC + '[9m'
+    DOUBLE_UNDERLINE = ESC + '[21m'
 
 class Color(Style):
     """
@@ -64,47 +67,47 @@ class Color(Style):
     More info:
         - https://github.com/termstandard/colors
     """
-    DIM = '\033[2m'
-    DIMMER = '\033[37m'
+    DIM = ESC + '[2m'
+    DIMMER = ESC + '[37m'
 
-    BLACK = '\033[30m'
-    RED = '\033[31m'
-    GREEN = '\033[32m'
-    YELLOW = '\033[33m'
-    OKBLUE = '\033[34m'
-    MAGENTA = '\033[35m'
-    CYAN = '\033[36m'
-    LIGHT_RED = '\033[91m'
-    LIGHT_GREEN = '\033[92m'
-    LIGHT_YELLOW = '\033[93m'
-    LIGHT_OKBLUE = '\033[94m'
-    LIGHT_MAGENTA = '\033[95m'
-    LIGHT_CYAN = '\033[96m'
-    WHITE = '\033[97m'
+    BLACK = ESC + '[30m'
+    RED = ESC + '[31m'
+    GREEN = ESC + '[32m'
+    YELLOW = ESC + '[33m'
+    OKBLUE = ESC + '[34m'
+    MAGENTA = ESC + '[35m'
+    CYAN = ESC + '[36m'
+    LIGHT_RED = ESC + '[91m'
+    LIGHT_GREEN = ESC + '[92m'
+    LIGHT_YELLOW = ESC + '[93m'
+    LIGHT_OKBLUE = ESC + '[94m'
+    LIGHT_MAGENTA = ESC + '[95m'
+    LIGHT_CYAN = ESC + '[96m'
+    WHITE = ESC + '[97m'
 
 
 class Back(Style):
     """
     Background colors.
     """
-    CONTRAST = '\033[7m'
+    CONTRAST = ESC + '[7m'
 
-    BLACK = '\033[40m'
-    RED = '\033[41m'
-    GREEN = '\033[42m'
-    YELLOW = '\033[43m'
-    BLUE = '\033[44m'
-    MAGENTA = '\033[45m'
-    CYAN = '\033[46m'
-    GRAY = '\033[47m'
-    LIGHT_BLACK = '\033[100m'
-    LIGHT_RED = '\033[101m'
-    LIGHT_GREEN = '\033[102m'
-    LIGHT_YELLOW = '\033[103m'
-    LIGHT_BLUE = '\033[104m'
-    LIGHT_MAGENTA = '\033[105m'
-    LIGHT_CYAN = '\033[106m'
-    LIGHT_GRAY = '\033[107m'
+    BLACK = ESC + '[40m'
+    RED = ESC + '[41m'
+    GREEN = ESC + '[42m'
+    YELLOW = ESC + '[43m'
+    BLUE = ESC + '[44m'
+    MAGENTA = ESC + '[45m'
+    CYAN = ESC + '[46m'
+    GRAY = ESC + '[47m'
+    LIGHT_BLACK = ESC + '[100m'
+    LIGHT_RED = ESC + '[101m'
+    LIGHT_GREEN = ESC + '[102m'
+    LIGHT_YELLOW = ESC + '[103m'
+    LIGHT_BLUE = ESC + '[104m'
+    LIGHT_MAGENTA = ESC + '[105m'
+    LIGHT_CYAN = ESC + '[106m'
+    LIGHT_GRAY = ESC + '[107m'
 
 
 def printc(message: str, style: str = "", end: str = "\n") -> None:
