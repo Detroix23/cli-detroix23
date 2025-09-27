@@ -6,9 +6,6 @@ Draw basic shapes. Uses the screen script.
 import maths.maths as maths
 import animations.screen as screen
 
-
-table2D = list[list[str]]
-
 class DrawError(Exception):
     """
     Raised when an error occurs when drawing a shape.
@@ -56,7 +53,7 @@ class Shape:
         self.fill = fill
         self.show_center = show_center
 
-    def draw(self) -> table2D:
+    def draw(self) -> maths.table2D:
         """
         Return a 2D table of chars, to draw on the char table. 
         """
@@ -75,12 +72,6 @@ class Shape:
         self.position.x %= self.support.size.x + self.size.x
         self.position.y %= self.support.size.y + self.size.y
 
-    @staticmethod
-    def create_table(size: maths.Size, character: str = "") -> table2D:
-        """
-        Return a 2D table; by default, full of empty strings.
-        """
-        return [[character for _ in range(size.x)] for _ in range(size.y)]
 
 
 class Rectangle(Shape):
@@ -99,8 +90,8 @@ class Rectangle(Shape):
     ) -> None:
         super().__init__(support, position, size, fill, show_center)
     
-    def draw(self) -> table2D:
-        table: table2D = Shape.create_table(self.size, self.fill)
+    def draw(self) -> maths.table2D:
+        table: maths.table2D = maths.create_table(self.size, self.fill)
 
         if self.show_center:
             table[self.size.y // 2][self.size.x // 2] = "0"
@@ -130,11 +121,11 @@ class RectangleHollow(Shape):
         super().__init__(support, position, size, fill, show_center)
         self.border_size: int = border_size
     
-    def draw(self) -> table2D:
+    def draw(self) -> maths.table2D:
         if self.border_size == 0:
             return [[self.fill] * self.size.x] * self.size.y
         else:
-            table: table2D = list()
+            table: maths.table2D = list()
             for y in range(self.size.y):
                 if self.border_size <= y < self.size.y - self.border_size:
                     table.append(
@@ -164,10 +155,10 @@ class Ellipse(Shape):
     ) -> None:
         super().__init__(support, position, size, fill, show_center)
 
-    def draw(self) -> table2D:
+    def draw(self) -> maths.table2D:
         size_x: int = self.size.x // 2
         size_y: int = self.size.y // 2
-        table: table2D = Shape.create_table(maths.Size(self.size.x + 1, self.size.y + 1))
+        table: maths.table2D = maths.create_table(maths.Size(self.size.x + 1, self.size.y + 1))
         
         for y in maths.both_range(size_y + 1):
             for x in maths.both_range(size_x + 1):
@@ -180,34 +171,32 @@ class Ellipse(Shape):
         return table
 
 
-# Exemples
-class Exemple1(screen.Screen):
-    def __init__(
-        self, 
-        void_char: str = "'", 
-        frame_delay: float = 0.3, 
-        global_style: str = "", 
-        debug: bool = False, 
-        deactivate_screen: bool = False
-    ) -> None:
-        super().__init__(void_char, frame_delay, global_style, debug, deactivate_screen)
+def str_to_table(text: str) -> maths.table2D:
+    """
+    Transform a string, using the line break, to a 2D table.
+    """
+    line_breaks: set[str] = {"\n", "\r"}
 
-        self.rect1 = Rectangle(self, maths.Vector2D(4, 5), maths.Size(8, 4), "#", True)
-        self.hrect1 = RectangleHollow(self, maths.Vector2D(7, 8), maths.Size(9, 6), "@", 2, True)
-        self.ell1 = Ellipse(self, maths.Vector2D(10, 10), maths.Size(8, 8), "$", True)
+    cursor: int = 0
+    table: maths.table2D = list()
+    line: list[str] = list()
+    while cursor < len(text):
+        # Line break
+        if cursor < len(text) and text[cursor] in line_breaks:        
+            if line:
+                table.append(line)
+            line = list()
+        else:
+            line.append(text[cursor])
 
-    def drawer(self) -> None:
-        self.write_table(self.rect1.draw(), self.rect1.position)
-        self.write_table(self.hrect1.draw(), self.hrect1.position)
-        self.write_table(self.ell1.draw(), self.ell1.position)
+        cursor += 1
 
-    def updater(self) -> None:
-        self.hrect1.shift(maths.Vector2D(0, 1))
+    if line:
+        table.append(line)
 
-def run_exemple1() -> None:
-    ex1 = Exemple1()
+    return table
 
-    ex1.run(Exemple1.updater, Exemple1.drawer)
 
 if __name__ == "__main__":
-    run_exemple1()
+    print("# Shapes")
+    print("See `exemples.py`.")

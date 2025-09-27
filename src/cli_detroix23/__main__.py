@@ -1,3 +1,4 @@
+#!/.venv/bin/python
 """
 main.py
 """
@@ -7,7 +8,7 @@ import animations.loadings as loadings
 import inputs.select_menu as select
 import base.style as style
 import base.models as models
-import shapes.base
+import shapes.exemples
 import base.colors
 
 def main() -> None:
@@ -49,7 +50,7 @@ def main() -> None:
             print()
 
         elif user_main_choice == "Shapes.Base":
-            shapes.base.run_exemple1()
+            shapes.exemples.run_exemple1()
 
         elif user_main_choice == "Base.Colors":
             base.colors.main()

@@ -6,6 +6,8 @@ Basic maths stuff.
 import os
 import math
 
+table2D = list[list[str]]
+
 class Size:
     """
     Simple int structure to store sizes.
@@ -70,7 +72,7 @@ class Vector2D:
             return self.x == target.x and self.y == target.y
         else:
             return False
-        
+
 
 def both_range(number: int) -> list[int]:
     """
@@ -83,3 +85,22 @@ def middle_range(number: int) -> list[int]:
     Return a list of all naturals from -number / 2 to number / 2 
     """
     return [i - number // 2 for i in range(number)]
+
+
+def create_table(size: Size, character: str = "") -> table2D:
+    """
+    Return a 2D table; by default, full of empty strings.
+    """
+    return [[character for _ in range(size.x)] for _ in range(size.y)]
+
+def create_table_like(model: table2D, character: str = "") -> table2D:
+    """
+    Return a 2D table that can contain the model; by default, full of empty strings.
+    """
+    max_y: int = len(model)
+    max_x: int = 0
+    for row in model:
+        if len(row) > max_x:
+            max_x = len(row)
+
+    return [[character for _ in range(max_x)] for _ in range(max_y)]
