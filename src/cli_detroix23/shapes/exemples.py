@@ -23,7 +23,6 @@ class Exemple1(screen.Screen):
         self.hrect1 = base.RectangleHollow(self, maths.Vector2D(7, 8), maths.Size(9, 6), "@", 2, True)
         self.ell1 = base.Ellipse(self, maths.Vector2D(10, 10), maths.Size(8, 8), "$", True)
         self.sprt1 = sprites.Sprite(self, maths.Vector2D(20, 20), maths.Size(10, 10), sprites.Exemples.Human)
-        self.sprt1.rotate(90)
 
     def drawer(self) -> None:
         self.write_table(self.rect1.draw(), self.rect1.position)
@@ -33,6 +32,9 @@ class Exemple1(screen.Screen):
 
     def updater(self) -> None:
         self.hrect1.shift(maths.Vector2D(0, 1))
+        if self.frames % 2 == 0:
+           self.sprt1.rotate(90)
+
 
 def run_exemple1() -> None:
     base.str_to_table("""
@@ -41,7 +43,9 @@ Another line...
 For the sprite!
 """)
 
-    ex1 = Exemple1()
+    ex1 = Exemple1(
+        frame_delay=1
+    )
 
     ex1.run(Exemple1.updater, Exemple1.drawer)
 

@@ -176,6 +176,7 @@ def str_to_table(text: str) -> maths.table2D:
     Transform a string, using the line break, to a 2D table.
     """
     line_breaks: set[str] = {"\n", "\r"}
+    blank_chars: set[str] = {" "}
 
     cursor: int = 0
     table: maths.table2D = list()
@@ -186,6 +187,8 @@ def str_to_table(text: str) -> maths.table2D:
             if line:
                 table.append(line)
             line = list()
+        elif text[cursor] in blank_chars:
+            line.append('') 
         else:
             line.append(text[cursor])
 
@@ -195,6 +198,25 @@ def str_to_table(text: str) -> maths.table2D:
         table.append(line)
 
     return table
+
+
+def squarify_table(table: maths.table2D, fill: str = "") -> None:
+    """
+    Ensure that all sub-list, records are of the same length. \n
+    Returns None but modify by reference the table.
+    """
+    # Find maximum.
+    width: int = 0
+    for row in table:
+        if len(row) > width:
+            width = len(row)
+    
+    # Modify by reference the row.
+    for row in table:
+        for _ in range(width - len(row)):
+            row.append(fill)
+
+    return
 
 
 if __name__ == "__main__":

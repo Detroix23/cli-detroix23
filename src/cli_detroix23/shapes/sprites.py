@@ -29,7 +29,7 @@ class Sprite(base.Shape):
         """
         Implement rotation on self sprite.
         """
-        self.sprite = transformations.rotation(self.sprite, angle)
+        self.sprite = transformations.simple_rotation(self.sprite, angle)
 
 
 def create_sprite(drawing: str) -> maths.table2D:
@@ -37,7 +37,8 @@ def create_sprite(drawing: str) -> maths.table2D:
     Create a sprite from a body of text, and rotate it 180 degrees.
     """
     table: maths.table2D = base.str_to_table(drawing)
-    table = transformations.rotation(table, 180)
+    base.squarify_table(table)
+    table = transformations.simple_rotation(table, 180)
 
     return table
 
@@ -47,4 +48,8 @@ class Exemples:
   @
 /###\
  | |
+""")
+    Block1: maths.table2D = create_sprite(r"""
+@#
+$O
 """)
