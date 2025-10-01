@@ -15,7 +15,8 @@ else:
 
 import base.specials as specials
 
-def get_key() -> str:
+def get_key(*, allow_keyboard_interrupt: bool = True) -> str:
+
     if UNIX_LIKE:
         fd: int = sys.stdin.fileno()
         old_settings: termios._AttrReturn = termios.tcgetattr(fd)
@@ -26,7 +27,7 @@ def get_key() -> str:
             if key == "\x1b":
                 key += sys.stdin.read(2)
             # Ctrl C.
-            if key == "\x03":
+            if key == "\x03" and allow_keyboard_interrupt:
                 raise KeyboardInterrupt(f"(X) - Keyboard interrupt while getting key ({repr(key)}).")
             return key
         finally:
@@ -48,10 +49,8 @@ def main() -> None:
     print("GET KEY.", end="\n")
     while True:
         key: str = get_key()
-        if key in specials.NICE_MAP:
-            print(specials.NICE_MAP[key], end="\r")
-        else:
-            print(repr(key), end="\r")
+        mapped: list[str] = specials.filter_map(specials.NICE_MAP, key)
+        print(mapped, end="\r")
 
 if __name__ == "__main__":
     main()
