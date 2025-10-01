@@ -27,7 +27,7 @@ def get_key(*, allow_keyboard_interrupt: bool = True) -> str:
             if key == "\x1b":
                 key += sys.stdin.read(2)
             # Ctrl C.
-            if key == "\x03" and allow_keyboard_interrupt:
+            elif key == "\x03" and allow_keyboard_interrupt:
                 raise KeyboardInterrupt(f"(X) - Keyboard interrupt while getting key ({repr(key)}).")
             return key
         finally:
@@ -38,6 +38,8 @@ def get_key(*, allow_keyboard_interrupt: bool = True) -> str:
         # Special key prefix on Windows
         if key == b"\xe0":  
             key += msvcrt.getch()
+        elif key == b"\x03" and allow_keyboard_interrupt:
+            raise KeyboardInterrupt(f"(X) - Keyboard interrupt while getting key ({repr(key)}).")
         return key.decode('utf-8', errors='ignore')
     
 
