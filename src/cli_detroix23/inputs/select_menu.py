@@ -1,16 +1,14 @@
-# type: ignore[reportPossiblyUnboundVariable]
+"""
+CLI - Inputs
+select_menu.py
+"""
 
 import sys
 import os
-
 UNIX_LIKE: bool = os.name == 'posix'
-if UNIX_LIKE:
-    import termios
-    import tty
-else:
-    import msvcrt
 
 import base.style as style
+import inputs.keys as keys
 
 class SelectMenu:
     """
@@ -33,27 +31,9 @@ class SelectMenu:
         """
         Get a single keypress from stdin
         """
-        if UNIX_LIKE:
-            fd: int = sys.stdin.fileno()
-            old_settings: termios._AttrReturn = termios.tcgetattr(fd)
-            try:
-                tty.setraw(sys.stdin.fileno())
-                key = sys.stdin.read(1)
-                # Handle arrow keys (escape sequences)
-                if key == '\x1b':
-                    key += sys.stdin.read(2)
-                return key
-            finally:
-                termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-        # Windows
-        else:  
-            key: str = msvcrt.getch()
-            # Special key prefix on Windows
-            if key == b'\xe0':  
-                key += msvcrt.getch()
-            return key.decode('utf-8', errors='ignore')
+        return keys.get_key()
 
-    def _clear_menu(self, num_lines) -> None:
+    def _clear_menu(self, num_lines: int) -> None:
         """
         Clear the menu from terminal
         """

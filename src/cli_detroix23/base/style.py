@@ -4,7 +4,6 @@ style.py
 """
 import os
 
-
 # Escape character.
 _POSSIBLE_ESC: set[str] = {"\033", "\x1b"}
 ESC: str = "\x1b"
