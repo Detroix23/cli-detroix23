@@ -5,7 +5,8 @@ style.py
 import os
 
 
-# Escape character. \033, \x1b
+# Escape character.
+_POSSIBLE_ESC: set[str] = {"\033", "\x1b"}
 ESC: str = "\x1b"
 
 # Shortcuts
@@ -111,36 +112,6 @@ class Back(Style):
     LIGHT_GRAY = ESC + '[107m'
 
 
-class Code:
-    """
-    Describe an or multiple escape code of VT-100 charset.
-    """
-    string: str
-
-    def __init__(self, string: str, decompose: bool = True) -> None:
-        if decompose:
-            pass
-        else:
-            self.string = string
-
-
-def clean_esc(string: str) -> str:
-    """
-    Return a string cleansed of its escape character.
-    """
-    cleaned: str = string
-    if string[0] == ESC:
-        cleaned = string[1:]
-    
-    return cleaned
-
-def clean_all_esc(string: str) -> list[str]:
-    """
-    Return a list of str, exploded from a str on each escape character.
-    """
-    cleaned: list[str] = string.split(ESC)
-    return cleaned
-
 
 def printc(message: str, style: str = "", end: str = "\n") -> None:
     """
@@ -152,19 +123,5 @@ def printc(message: str, style: str = "", end: str = "\n") -> None:
     
     return
 
-def main() -> None:
-    Style.display_all_rendition_subset()
-
-    s1 = f"{Color.BLACK}A{END}"
-    print(f"s1: {s1}, l: {len(s1)}")
-    s2 = f"{Color.CYAN}B{END}"
-
-    print(clean_esc(s2))
-    print(clean_all_esc(s2))
-    print(clean_all_esc(s1 + s2))
-
-    printc(f"█", Color.DIM)
-    printc(f"█", Color.DIMMER)
-
 if __name__ == "__main__":
-    main()
+    print("cf. Exemples.")

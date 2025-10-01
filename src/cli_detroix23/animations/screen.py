@@ -227,13 +227,13 @@ class Screen:
         and only if the char table is different or the window size.
         """
         if self.char_table != self.previous_char_table or self.size != maths.Size.terminal_size():
-            table: str = ""
+            table: list[str] = list()
             self.char_table[-1].pop()
             for records in self.char_table:
                 for char in records:
                     table += self.global_style + char + style.END
-                table += "\n"
-            sys.stdout.write(table[:-5])
+                table.append("\n")
+            sys.stdout.write("".join(table[:-4]))
 
     def total_char_table_len(self) -> int:
         total: int = 0

@@ -2,11 +2,11 @@
 """
 main.py
 """
-
+import base.style as style
 import animations.exemples
 import animations.loadings as loadings
 import inputs.select_menu as select
-import base.style as style
+import base.exemples
 import base.models as models
 import shapes.exemples
 import base.colors
@@ -37,7 +37,7 @@ def main() -> None:
             animations.exemples.run_matrix()
 
         elif user_main_choice == "Base.Style":
-            style.main()
+            base.exemples.main()
 
         elif user_main_choice == "Animations.Loadings":
             loadings.main()
