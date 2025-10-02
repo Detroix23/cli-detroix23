@@ -2,11 +2,9 @@
 CLI - Inputs
 select_menu.py
 """
-
 import sys
-import os
-UNIX_LIKE: bool = os.name == 'posix'
 
+import compatibility.plateform as plateform
 import base.style as style
 import inputs.keys as keys
 
@@ -72,9 +70,8 @@ class SelectMenu:
             
             while True:
                 key: str = self._get_key()
-                
                 # Handle arrow keys
-                if UNIX_LIKE:
+                if plateform.OS == plateform.Os.UNIX:
                     if key == '\x1b[A':  # Up arrow
                         self.selected_index = (self.selected_index - 1) % len(self.options)
                     elif key == '\x1b[B':  # Down arrow
@@ -83,7 +80,7 @@ class SelectMenu:
                         break
                     elif key == '\x03':  # Ctrl+C
                         raise KeyboardInterrupt
-                else:  # Windows
+                elif plateform.OS == plateform.Os.WINDOWS:  
                     if key == 'H':  # Up arrow
                         self.selected_index = (self.selected_index - 1) % len(self.options)
                     elif key == 'P':  # Down arrow
@@ -92,7 +89,10 @@ class SelectMenu:
                         break
                     elif key == '\x03':  # Ctrl+C
                         raise KeyboardInterrupt(f"{style.Color.YELLOW}(!) - Keyboard Interrupt. {style.END}")
-                
+                else:
+                    raise OSError(f"(X) - SelectMenu.show - Unsupported OS ({plateform.OS}).")            
+
+
                 # Clear and redraw menu
                 self._clear_menu(len(self.options) + 1)
                 self._draw_menu()

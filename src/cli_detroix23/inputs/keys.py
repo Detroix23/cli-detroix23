@@ -4,10 +4,9 @@ CLI - Inputs
 keys.py
 """
 import sys
-import os
 
-UNIX_LIKE: bool = os.name == 'posix'
-if UNIX_LIKE:
+import compatibility.plateform as plateform
+if plateform.OS == plateform.Os.UNIX:
     import termios
     import tty
 else:
@@ -15,9 +14,20 @@ else:
 
 import base.specials as specials
 
-def get_key(*, allow_keyboard_interrupt: bool = True) -> str:
+class Key:
+    windows: str
+    unix: str
 
-    if UNIX_LIKE:
+    def __init__(self, windows: str, unix: str) -> None:
+        self.windows = windows
+        self.unix = unix
+
+
+def get_key(*, allow_keyboard_interrupt: bool = True) -> str:
+    """
+    Get the user pressed key.
+    """
+    if plateform.OS == plateform.Os.UNIX:
         fd: int = sys.stdin.fileno()
         old_settings: termios._AttrReturn = termios.tcgetattr(fd)
         try:
@@ -26,7 +36,7 @@ def get_key(*, allow_keyboard_interrupt: bool = True) -> str:
             # Handle arrow keys (escape sequences).
             if key == "\x1b":
                 key += sys.stdin.read(2)
-            # Ctrl C.
+            # Ctrl+C.
             elif key == "\x03" and allow_keyboard_interrupt:
                 raise KeyboardInterrupt(f"(X) - Keyboard interrupt while getting key ({repr(key)}).")
             return key
@@ -38,10 +48,12 @@ def get_key(*, allow_keyboard_interrupt: bool = True) -> str:
         # Special key prefix on Windows
         if key == b"\xe0":  
             key += msvcrt.getch()
+        # Ctrl+C.
         elif key == b"\x03" and allow_keyboard_interrupt:
             raise KeyboardInterrupt(f"(X) - Keyboard interrupt while getting key ({repr(key)}).")
         return key.decode('utf-8', errors='ignore')
     
+
 
 
 def main() -> None:
