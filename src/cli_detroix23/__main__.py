@@ -10,7 +10,7 @@ import base.exemples
 import base.models as models
 import shapes.exemples
 import base.colors
-import inputs.keys
+import inputs.exemples
 
 def main() -> None:
     print("# CLI module for Python, by Detroix23.")
@@ -57,7 +57,7 @@ def main() -> None:
                 base.colors.main()
 
             elif user_main_choice == "Inputs.Keys":
-                inputs.keys.main()
+                inputs.exemples.run_basic_keys()
 
             elif user_main_choice == "Quit":
                 style.printc("Quiting.", style=style.Color.YELLOW)

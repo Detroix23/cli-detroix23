@@ -6,7 +6,9 @@ Basic maths stuff.
 import os
 import math
 
-table2D = list[list[str]]
+import compatibility.types as types
+
+table2D = types.table2D
 
 class Size:
     """
