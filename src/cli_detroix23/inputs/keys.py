@@ -51,17 +51,18 @@ class Key:
     def __repr__(self) -> str:
         return f"Key(name={repr(self._name)}, windows={repr(self._windows)}, unix={repr(self._unix)})"
 
-    def __eq__(self, other: Union['Key', str, object]) -> bool:
+    def __eq__(self, other: Union['Key', str]) -> bool: # pyright: ignore[reportIncompatibleMethodOverride]
+        """
+        Compare keys, `str` or `Key`.
+        """
         if isinstance(other, Key):
-            return self.get() == other.get()
-        elif isinstance(other, str):
-            return self.get() == other
+            return self.key() == other.get()
         else:
-            raise ValueError(f"(X) - Equality operator `==` must be between two instances of Key ({other}).")
+            return self.key() == other
 
     def get(self, os: plateform.Os = plateform.OS) -> str:
         """
-        Return the key string, un-escaped. 
+        Return the key string, showing the representation `repr`. 
         """
         if os == plateform.Os.UNIX:
             return repr(self._unix)
@@ -70,7 +71,8 @@ class Key:
 
     def key(self, os: plateform.Os = plateform.OS) -> str:
         """
-        Return the key string, un-escaped. 
+        Return the key string, un-escaped. \r
+        Use for comparison.
         """
         if os == plateform.Os.UNIX:
             return self._unix

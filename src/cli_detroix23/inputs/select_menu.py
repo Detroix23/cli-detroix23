@@ -79,7 +79,8 @@ class SelectMenu:
                     elif key == '\r' or key == '\n':  # Enter
                         break
                     elif key == '\x03':  # Ctrl+C
-                        raise KeyboardInterrupt
+                        raise KeyboardInterrupt(f"{style.Color.YELLOW}(!) - Keyboard Interrupt. {style.END}")
+
                 elif plateform.OS == plateform.Os.WINDOWS:  
                     if key == 'H':  # Up arrow
                         self.selected_index = (self.selected_index - 1) % len(self.options)
@@ -98,6 +99,7 @@ class SelectMenu:
                 self._draw_menu()
         except KeyboardInterrupt:
             raise KeyboardInterrupt(f"{style.Color.YELLOW}(!) - Keyboard Interrupt. {style.END}")
+        
         finally:
             # Show cursor again
             sys.stdout.write('\x1b[?25h')
