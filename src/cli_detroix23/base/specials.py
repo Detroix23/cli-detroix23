@@ -3,11 +3,13 @@ CLI - Style/ Base
 specials.py
 Special escape characters.
 """
+from typing import Final
 
-_POSSIBLE_ESC: set[str] = {"\033", "\x1b"}
-ESC: str = "\x1b"
+_POSSIBLE_ESC: Final[set[str]] = {"\033", "\x1b"}
+ESC: Final[str] = "\x1b"
+WINDOWS: Final[str] = "\xe0"
 
-NICE_MAP: dict[str, str] = {
+NICE_MAP: Final[dict[str, str]] = {
     "\x00": "Null",
     "\x01": "Heading start",
     "\x02": "Text start",

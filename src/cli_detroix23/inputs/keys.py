@@ -56,7 +56,7 @@ class Key:
         Compare keys, `str` or `Key`.
         """
         if isinstance(other, Key):
-            return self.key() == other.get()
+            return self.key() == other.key()
         else:
             return self.key() == other
 
@@ -93,14 +93,14 @@ class Keys:
     ``` 
     """
     ESC = Key("Escape", specials.ESC, specials.ESC)
-    UP = Key("Arrow up", specials.ESC +"[A", specials.ESC + "[A")
-    DOWN = Key("Arrow down", specials.ESC + "[B", specials.ESC + "[B")
-    LEFT = Key("Arrow left", specials.ESC + "[C", specials.ESC + "[C")
-    RIGHT = Key("Arrow down", specials.ESC + "[D", specials.ESC + "[D")
+    UP = Key("Arrow up", specials.WINDOWS + "H", specials.ESC +"[A")
+    DOWN = Key("Arrow down", specials.WINDOWS + "P", specials.ESC + "[B")
+    LEFT = Key("Arrow left", specials.WINDOWS + "[C", specials.ESC + "[C")
+    RIGHT = Key("Arrow down", specials.WINDOWS + "[D", specials.ESC + "[D")
     RETURN = Key("Carriage return", "\r", "\r")
     LINE = Key("New line", "\n", "\n")
     SPACE = Key.new_common(" ")
-
+    INTERRUPT = Key("Keyboard interrupt", "\x03", "\x03")
 
 
 def get_key(*, allow_keyboard_interrupt: bool = True) -> Key:
@@ -127,7 +127,7 @@ def get_key(*, allow_keyboard_interrupt: bool = True) -> Key:
     elif plateform.OS == plateform.Os.WINDOWS: 
         key: str = msvcrt.getch()       # pyright: ignore
         # Special key prefix on Windows
-        if key == b"\xe0":  
+        if key == specials.WINDOWS:  
             key += msvcrt.getch()       # pyright: ignore
         # Ctrl+C.
         elif key == b"\x03" and allow_keyboard_interrupt:
@@ -144,10 +144,8 @@ def compare(key_a: Union[str, Key], key_b: Union[str, Key]) -> bool:
     Test if 2 keys are the same. \r
     Used for inputs.
     """
-    comp_a: str = key_a.get() if isinstance(key_a, Key) else key_a
-    comp_b: str = key_b.get() if isinstance(key_b, Key) else key_b
-    
-    return comp_a == comp_b
+    comparison: bool = key_a == key_b
+    return comparison
 
 
 if __name__ == "__main__":

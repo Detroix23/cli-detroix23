@@ -63,7 +63,7 @@ class SelectMenu:
         Return a string, the choosen index.
         """
         try:
-            # Hide cursor
+            # Hide cursor.
             sys.stdout.write('\x1b[?25l')
 
             self._draw_menu()
