@@ -19,9 +19,10 @@ def run_basic_keys() -> None:
 
     print("\nGET KEY.", end="\n")
     while True:
-        key: str = keys.get_key()
-        mapped: list[str] = specials.filter_map(specials.NICE_MAP, key)
-        print(mapped, end="\r")
+        key: keys.Key = keys.get_key()
+        mapped: list[str] = specials.filter_map(specials.NICE_MAP, key.get())
+        good: bool = keys.compare('a', key)
+        print(f"\r{mapped}, raw={repr(key)}, good={good}.  ", end="\r")
 
 if __name__ == "__main__":
     run_basic_keys()

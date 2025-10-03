@@ -25,7 +25,7 @@ class SelectMenu:
 
         self.select_character: str = "> "
 
-    def _get_key(self) -> str:
+    def _get_key(self) -> keys.Key:
         """
         Get a single keypress from stdin
         """
@@ -69,7 +69,7 @@ class SelectMenu:
             self._draw_menu()
             
             while True:
-                key: str = self._get_key()
+                key: keys.Key = self._get_key()
                 # Handle arrow keys
                 if plateform.OS == plateform.Os.UNIX:
                     if key == '\x1b[A':  # Up arrow

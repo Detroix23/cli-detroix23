@@ -12,7 +12,7 @@ class Os(Enum):
     Define supported systems.
     """
     WINDOWS = 0
-    UNIX = 0
+    UNIX = 1
 
 # Current 
 OS: Final[Os] = Os.UNIX if os.name == 'posix' else Os.WINDOWS
