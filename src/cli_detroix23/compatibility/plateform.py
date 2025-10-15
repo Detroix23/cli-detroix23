@@ -6,7 +6,6 @@ import os
 from typing import Final
 from enum import Enum
 
-
 class Os(Enum):
     """
     Define supported systems.

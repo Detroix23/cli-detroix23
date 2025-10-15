@@ -27,6 +27,9 @@ class Size:
     def area(self) -> int:
         return self.x * self.y
 
+    def __hash__(self) -> int:
+        return hash((self.x, self.y))
+
     @staticmethod
     def terminal_size() -> 'Size':
         """
@@ -74,6 +77,9 @@ class Vector2D:
             return self.x == target.x and self.y == target.y
         else:
             return False
+
+    def __hash__(self) -> int:
+        return hash((self.x, self.y))
 
 
 def both_range(number: int) -> list[int]:

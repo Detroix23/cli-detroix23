@@ -5,6 +5,17 @@ transformations.py
 
 import maths.maths as base
 
+RELATIVE_NEIGHBOURS: set[base.Vector2D] = {
+    base.Vector2D(1, 0),
+    base.Vector2D(1, 1),
+    base.Vector2D(0, 1),
+    base.Vector2D(-1, 1),
+    base.Vector2D(-1, 0),
+    base.Vector2D(-1, -1),
+    base.Vector2D(0, -1),
+    base.Vector2D(1, -1),
+}
+
 
 def simple_cos(a: int) -> int:
     """

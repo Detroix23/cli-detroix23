@@ -30,10 +30,16 @@ class Exemple1(screen.Screen):
         self.write_table(self.ell1.draw(), self.ell1.position)
         self.write_table(self.sprt1.draw(), self.sprt1.position)
 
+        if self.pressed_key is not None:
+            self.write(f"Key={self.pressed_key.get()}", maths.Vector2D(self.size.x // 2, self.size.y // 2))
+
     def updater(self) -> None:
         self.hrect1.shift(maths.Vector2D(0, 1))
         if self.frames % 2 == 0:
            self.sprt1.rotate(90)
+
+        # Keys. Now native to `Screen`.
+        # self.key = keys.get_key()
 
 
 def run_exemple1() -> None:

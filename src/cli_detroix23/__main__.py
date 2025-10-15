@@ -2,26 +2,35 @@
 """
 main.py
 """
+import compatibility.plateform as plateform
+import test.debug
 import base.style as style
+import base.exemples
+import base.models as models
+import base.colors
 import animations.exemples
 import animations.loadings as loadings
 import inputs.select_menu as select
-import base.exemples
-import base.models as models
-import shapes.exemples
-import base.colors
 import inputs.exemples
+import shapes.exemples
 
 def main() -> None:
     print("# CLI module for Python, by Detroix23.")
-    
+    print(f"Running on {plateform.OS}")
+
     user_in: bool = True
+    debug: bool = True
+
+    if debug:
+        test.debug.ENABLE_DEBUG = True
+    
     try:
         while user_in:
             main_select: select.SelectMenu = select.SelectMenu(
                 [
                     "Animations.Matrix",
-                    "Base.Style", 
+                    "Animations.GameOfLife",
+                    #"Base.Style", 
                     "Animations.Loadings",
                     "Base.Models",
                     "Shapes.Base",
@@ -36,6 +45,9 @@ def main() -> None:
 
             if user_main_choice == "Animations.Matrix":
                 animations.exemples.run_matrix()
+
+            elif user_main_choice == "Animations.GameOfLife":
+                animations.exemples.run_game_of_life()
 
             elif user_main_choice == "Base.Style":
                 base.exemples.main()
@@ -70,6 +82,13 @@ def main() -> None:
     except KeyboardInterrupt:
         user_in = False
         style.printc("Quiting (Ctrl+C).", style=style.Color.YELLOW)
+
+    finally:
+        if plateform.OS == plateform.Os.UNIX:
+            import compatibility.unix
+
+            test.debug.debug_print("__main__.main - End CLI reseted settings.")
+            compatibility.unix.set_to_default()
 
 if __name__ == "__main__":
     main()

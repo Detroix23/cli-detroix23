@@ -4,7 +4,7 @@ select_menu.py
 """
 import sys
 
-import compatibility.plateform as plateform
+# import compatibility.plateform as plateform
 import base.style as style
 import inputs.keys as keys
 
@@ -71,28 +71,14 @@ class SelectMenu:
             while True:
                 key: keys.Key = self._get_key()
                 # Handle arrow keys
-                if plateform.OS == plateform.Os.UNIX:
-                    if key == '\x1b[A':  # Up arrow
-                        self.selected_index = (self.selected_index - 1) % len(self.options)
-                    elif key == '\x1b[B':  # Down arrow
-                        self.selected_index = (self.selected_index + 1) % len(self.options)
-                    elif key == '\r' or key == '\n':  # Enter
-                        break
-                    elif key == '\x03':  # Ctrl+C
-                        raise KeyboardInterrupt(f"{style.Color.YELLOW}(!) - Keyboard Interrupt. {style.END}")
-
-                elif plateform.OS == plateform.Os.WINDOWS:  
-                    if key == 'H':  # Up arrow
-                        self.selected_index = (self.selected_index - 1) % len(self.options)
-                    elif key == 'P':  # Down arrow
-                        self.selected_index = (self.selected_index + 1) % len(self.options)
-                    elif key == '\r':  # Enter
-                        break
-                    elif key == '\x03':  # Ctrl+C
-                        raise KeyboardInterrupt(f"{style.Color.YELLOW}(!) - Keyboard Interrupt. {style.END}")
-                else:
-                    raise OSError(f"(X) - SelectMenu.show - Unsupported OS ({plateform.OS}).")            
-
+                if key == keys.Keys.UP:
+                    self.selected_index = (self.selected_index - 1) % len(self.options)
+                elif key == keys.Keys.DOWN:
+                    self.selected_index = (self.selected_index + 1) % len(self.options)
+                elif key == keys.Keys.LINE or key == keys.Keys.RETURN:
+                    break
+                elif key == keys.Keys.INTERRUPT:
+                    raise KeyboardInterrupt(f"{style.Color.YELLOW}(!) - Keyboard Interrupt. {style.END}")      
 
                 # Clear and redraw menu
                 self._clear_menu(len(self.options) + 1)

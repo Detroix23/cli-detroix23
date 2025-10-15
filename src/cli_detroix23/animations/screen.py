@@ -7,13 +7,16 @@ Multi-line updating terminal display.
 import os
 import sys
 import time
+import threading
 from typing import Callable, Union, Optional
 from enum import Enum
 
+import compatibility.plateform
+import compatibility.unix
+import test.debug
 import maths.maths as maths
 import base.style as style
-
-
+import inputs.keys
 
 class ReadingWay(Enum):
     LEFT_RIGHT = 0
@@ -22,11 +25,26 @@ class ReadingWay(Enum):
     DOWN_UP = 3
 
 class Screen:
+    """
+    # Define a whole CLI application.
+    See `./animations/exemples.py` for exemple applications. \r
+    Main method: `run`, taking an `updater` and a `drawer`. \r
+    """
+    running: bool
     size: maths.Size
     updater: Optional[Callable[..., None]]
     drawer: Optional[Callable[..., None]]
     _frames: int
+    debug: bool
+    deactivate_screen: bool
+    void_char: str
+    frame_delay: float
+    global_style: str
     char_table: list[list[str]]
+    previous_char_table: list[list[str]]
+    read_keys: bool
+    _key_informations: inputs.keys.Info
+    threads: dict[str, threading.Thread]
 
     def __init__(
         self, 
@@ -34,22 +52,51 @@ class Screen:
         frame_delay: float = 0.1,
         global_style: str = "",
         debug: bool = False,
-        deactivate_screen: bool = False
+        deactivate_screen: bool = False,
+        read_keys: bool = True,
     ) -> None:
-        self.size: maths.Size = maths.Size(*self.update_size())
-        self.updater: Optional[Callable[..., None]] = None
-        self.drawer: Optional[Callable[..., None]] = None
-        self._frames: int = 0
-        self.debug: bool = debug
-        self.deactivate_screen: bool = deactivate_screen
-
+        self.running = False
+        self.size = maths.Size(*self.update_size())
+        self.updater = None
+        self.drawer = None
+        self._frames = 0
+        self.debug = debug
+        self.deactivate_screen = deactivate_screen
         self.void_char: str = void_char
         self.frame_delay: float = frame_delay
         self.global_style: str = global_style
+        self.char_table = self.blank_char_table()
+        self.previous_char_table = self.blank_char_table()
+        self.read_keys = read_keys
+        self._key_informations = inputs.keys.Info()
+        self.threads = dict()
 
-        self.char_table: list[list[str]] = self.blank_char_table()
-        self.previous_char_table: list[list[str]] = self.blank_char_table()
+    def _draw(self) -> None:
+        # Ensure drawer.
+        while self.running and self.drawer:
+            # Clear the whole screen.
+            if not (self.deactivate_screen or self.debug):
+                sys.stdout.write("\033[H\033[3J")
+                sys.stdout.flush()
 
+            test.debug.debug_print(f"Screen._draw - User draw.")
+            self.drawer(self)
+
+            # Char table
+            test.debug.debug_print(f"Screen._draw - Char table.")
+            if self.debug:
+                print(fr"{self.char_table}")
+            if not (self.debug or self.deactivate_screen):
+                self.print_char_table()
+            
+            self.previous_char_table = self.char_table
+            self.char_table = self.blank_char_table()
+            
+            sys.stdout.flush()
+            
+            # Frames
+            time.sleep(self.frame_delay)
+            self._frames += 1
 
     def run(
         self,       
@@ -62,44 +109,65 @@ class Screen:
         self.updater = updater
         self.drawer = drawer
         self._frames: int = 0
+        self.running = True
+        self._key_informations.running = True
 
-        running: bool = True
+        # Threads.
+        if self.read_keys:
+            test.debug.debug_print("Created thread: keys.")
+
+            self.threads["keys"] = threading.Thread(
+                target=inputs.keys.fetch_target,
+                args=(self._key_informations,),
+            )
+            
+        test.debug.debug_print("Created thread: draw.")
+        
+        self.threads["draw"] = threading.Thread(
+            target=self._draw,
+        )
+
+        for name, thread in self.threads.items():
+            test.debug.debug_print(f"Started thread: {name}")
+            thread.start()
 
         try:
-            # Main loop
-            while running:
-                # Clear the whole screen.
-                if not (self.deactivate_screen or self.debug):
-                    # print("\033[H\033[2J", end="")
-                    sys.stdout.write("\033[H\033[3J")
-                    sys.stdout.flush()
-
+            # Main update loop
+            test.debug.debug_print("Started main loop.")
+            while self.running:
+                # Keyboard interrupt.
+                if self._key_informations.current == inputs.keys.Keys.INTERRUPT:
+                    raise KeyboardInterrupt(f"(X) - KeyboardInterrupt. Felt from `Screen.run`.")
 
                 # Update.
                 self.size = maths.Size(*self.update_size())
 
-                # User functions.
+                # User updater function.
                 self.updater(self)
-                self.drawer(self)
 
-                # Char table
-                if self.debug:
-                    print(fr"{self.char_table}")
-                if not (self.debug or self.deactivate_screen):
-                    self.print_char_table()
-                self.previous_char_table = self.char_table
-                self.char_table = self.blank_char_table()
-                sys.stdout.flush()
-                
-
-                # Frames
-                time.sleep(self.frame_delay)
-                self._frames += 1
+                time.sleep(0.02)
 
         except KeyboardInterrupt:
-            print("\033[H\033[2J", end="")
-            style.printc("(!) - Keyboard interrupt.", style.Color.YELLOW)
+            self.running = False
+            self._key_informations.running = False
 
+            sys.stdout.write("\033[H\033[2J")
+            sys.stdout.flush()
+            style.printc("(!) - Keyboard interrupt. Felt from `Screen.run`.", style.Color.YELLOW)
+
+        finally:
+            self.running = False
+            self._key_informations.running = False
+
+            for name, thread in self.threads.items():
+                test.debug.debug_print(f"Joining thread: {name}")
+                thread.join()
+
+            if compatibility.plateform.OS == compatibility.plateform.Os.UNIX:
+                test.debug.debug_print("Screen.run - End: reset CL settings.")
+                compatibility.unix.set_to_default()
+
+            sys.stdout.flush()
 
     def update_size(self) -> tuple[int, int]:
         size: tuple[int, int] = os.get_terminal_size()
@@ -108,11 +176,21 @@ class Screen:
     @property
     def frames(self) -> int:
         """
-        Get the value of frames. Semi-private proprety: read-only.
+        Get the value of `frames`. Semi-private proprety: read-only.
         """
         return self._frames
 
+    @property
+    def pressed_key(self) -> Optional[inputs.keys.Key]:
+        """
+        Get the value of `_current_key`. Read-only.
+        """
+        return self._key_informations.current
+
     def frames_reset(self) -> None:
+        """
+        Reset the frame counter to 0.
+        """
         self._frames = 0
 
     def blank_char_table(self) -> list[list[str]]:
