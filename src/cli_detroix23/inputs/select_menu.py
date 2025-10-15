@@ -7,6 +7,7 @@ import sys
 # import compatibility.plateform as plateform
 import base.style as style
 import inputs.keys as keys
+import inputs.fetch
 
 class SelectMenu:
     """
@@ -29,7 +30,7 @@ class SelectMenu:
         """
         Get a single keypress from stdin
         """
-        return keys.get_key()
+        return inputs.fetch.get()
 
     def _clear_menu(self, num_lines: int) -> None:
         """

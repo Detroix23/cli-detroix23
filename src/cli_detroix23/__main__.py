@@ -5,9 +5,9 @@ main.py
 import compatibility.plateform as plateform
 import test.debug
 import base.style as style
-import base.exemples
 import base.models as models
 import base.colors
+import base.exemples
 import animations.exemples
 import animations.loadings as loadings
 import inputs.select_menu as select

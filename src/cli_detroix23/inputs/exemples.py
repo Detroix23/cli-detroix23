@@ -4,6 +4,7 @@ exemples.py
 """
 import base.specials as specials
 import inputs.keys as keys
+import inputs.fetch
 
 def run_basic_keys() -> None:
     """
@@ -19,9 +20,9 @@ def run_basic_keys() -> None:
 
     print("\nGET KEY.", end="\n")
     while True:
-        key: keys.Key = keys.get_key()
+        key: keys.Key = inputs.fetch.get()
         mapped: list[str] = specials.filter_map(specials.NICE_MAP, key.key())
-        good: bool = keys.compare(keys.Keys.DOWN, key)
+        good: bool = inputs.fetch.compare(keys.Keys.DOWN, key)
         print(f"\r{mapped}, key={repr(key)}, good={good}.  ", end="\r")
 
 if __name__ == "__main__":

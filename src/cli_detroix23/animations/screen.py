@@ -17,6 +17,7 @@ import test.debug
 import maths.maths as maths
 import base.style as style
 import inputs.keys
+import inputs.fetch
 
 class ReadingWay(Enum):
     LEFT_RIGHT = 0
@@ -117,7 +118,7 @@ class Screen:
             test.debug.debug_print("Created thread: keys.")
 
             self.threads["keys"] = threading.Thread(
-                target=inputs.keys.fetch_target,
+                target=inputs.fetch.fetch_target,
                 args=(self._key_informations,),
             )
             

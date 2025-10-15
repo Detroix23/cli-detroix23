@@ -2,21 +2,10 @@
 CLI - Inputs
 keys.py
 """
-import sys
-import threading
 import dataclasses
 from typing import Union, Optional 
 
-import test.debug
 import compatibility.plateform as plateform
-if plateform.OS == plateform.Os.UNIX:
-    import termios
-    import tty
-    
-    import compatibility.unix
-elif plateform.OS == plateform.Os.WINDOWS:
-    import msvcrt
-
 import base.specials as specials
 
 class Key:
@@ -132,83 +121,6 @@ class Info:
             return self.history[0]
         else:
             return
-
-
-def get_key(*, allow_keyboard_interrupt: bool = True) -> Key:
-    """
-    Get the user pressed key.
-    """
-    if plateform.OS == plateform.Os.UNIX:
-        # Old settings are stored in `compatibility.unix`.
-        try:
-            tty.setraw(compatibility.unix.FILE_ID)          # pyright: ignore[reportPossiblyUnboundVariable]
-            key = sys.stdin.read(1)
-            # Handle arrow keys (escape sequences).
-            if key == specials.ESC:
-                key += sys.stdin.read(2)
-            # Ctrl+C.
-            elif key == "\x03" and allow_keyboard_interrupt:
-                raise KeyboardInterrupt(f"(X) - Keyboard interrupt while getting key ({repr(key)}).")
-
-            return Key.new_common(key)
-        
-        finally:
-            termios.tcsetattr(                  # pyright: ignore[reportPossiblyUnboundVariable]
-                compatibility.unix.FILE_ID,     # pyright: ignore[reportPossiblyUnboundVariable]
-                termios.TCSADRAIN,              # pyright: ignore[reportPossiblyUnboundVariable]
-                compatibility.unix.SETTINGS     # pyright: ignore[reportPossiblyUnboundVariable]
-            )      
-    # Windows
-    elif plateform.OS == plateform.Os.WINDOWS: 
-        key: str = msvcrt.getch()       # pyright: ignore
-        # Special key prefix on Windows
-        if key == specials.WINDOWS:  
-            key += msvcrt.getch()       # pyright: ignore
-        # Ctrl+C.
-        elif key == b"\x03" and allow_keyboard_interrupt:
-            raise KeyboardInterrupt(f"(X) - Keyboard interrupt while getting key ({repr(key)}).")
-        
-        return Key.new_common(key.decode('utf-8', errors='ignore'))     # pyright: ignore
-    
-    # Failed to find os.
-    else:
-        raise OSError(f"(X) - Keys.get_key: Unrecognized OS ({plateform.OS}).")
-
-def compare(key_a: Union[str, Key], key_b: Union[str, Key]) -> bool:
-    """
-    Test if 2 keys are the same. \r
-    Used for inputs.
-    """
-    comparison: bool = key_a == key_b
-    return comparison
-
-def fetch_target(info: Info) -> None:
-    """
-    Run a loop in a separate thread. \r
-    Send pressed key by reference in the given `info` object.
-    Here runs the main loop.
-    """
-    test.debug.debug_print("keys.fetch_target - Starting loop.")
-    while info.running:
-        current: Key = get_key(allow_keyboard_interrupt=False)
-        test.debug.debug_print(f"compare.fetch_target - Registred key: {current}")
-        info.new_key(current)
-
-    test.debug.debug_print("keys.fetch_target - Finished loop.")
-
-def fetch(info: Info) -> None:
-    """
-    Run a loop in a separate thread. \r
-    Send pressed key by reference in the given `info` object.
-    Here is created the thread, calling `fetch_target`.
-    """
-    test.debug.debug_print("keys.fetch - Starting thread.")
-    key_thread = threading.Thread(
-        target=fetch_target, 
-        args=(info,), 
-        daemon=True,
-    )
-    key_thread.start()
 
 
 if __name__ == "__main__":
