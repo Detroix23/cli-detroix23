@@ -25,10 +25,19 @@ class Size:
         self.y: int = y
     
     def area(self) -> int:
+        """
+        Compute the area.
+        """
         return self.x * self.y
 
     def __hash__(self) -> int:
+        """
+        Hash dunder method. Allow use in `set`,...
+        """
         return hash((self.x, self.y))
+
+    def __repr__(self) -> str:
+        return f"Size(x={self.x}, y={self.y})"
 
     @staticmethod
     def terminal_size() -> 'Size':

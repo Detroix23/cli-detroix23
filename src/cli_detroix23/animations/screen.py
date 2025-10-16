@@ -93,6 +93,7 @@ class Screen:
             self.previous_char_table = self.char_table
             self.char_table = self.blank_char_table()
             
+            test.debug.debug_print(f"Screen._draw - Size: {self.size}")
             sys.stdout.flush()
             
             # Frames
@@ -172,7 +173,7 @@ class Screen:
 
     def update_size(self) -> tuple[int, int]:
         size: tuple[int, int] = os.get_terminal_size()
-        return size[0], size[1]
+        return (size[0], size[1])
 
     @property
     def frames(self) -> int:

@@ -3,7 +3,6 @@ CLI - Inputs
 unix.py
 """
 import sys
-import termios
 import tty
 
 import compatibility.unix
@@ -24,12 +23,11 @@ def get_key(*, allow_keyboard_interrupt: bool) -> inputs.keys.Key:
         elif key == "\x03" and allow_keyboard_interrupt:
             raise KeyboardInterrupt(f"(X) - Keyboard interrupt while getting key ({repr(key)}).")
 
+        compatibility.unix.set_to_default()
+
         return inputs.keys.Key.new_common(key)
     
-    finally:
-        termios.tcsetattr(
-            compatibility.unix.FILE_ID,
-            termios.TCSADRAIN,
-            compatibility.unix.SETTINGS
-        )
+    except Exception as exception:
+        compatibility.unix.set_to_default()
     
+        raise exception

@@ -12,10 +12,10 @@ class Exemple1(screen.Screen):
     def __init__(
         self, 
         void_char: str = "'", 
-        frame_delay: float = 0.3, 
+        frame_delay: float = 1, 
         global_style: str = "", 
         debug: bool = False, 
-        deactivate_screen: bool = False
+        deactivate_screen: bool = True
     ) -> None:
         super().__init__(void_char, frame_delay, global_style, debug, deactivate_screen)
 

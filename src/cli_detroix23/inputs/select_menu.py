@@ -6,6 +6,7 @@ import sys
 
 # import compatibility.plateform as plateform
 import base.style as style
+import base.controls as controls
 import inputs.keys as keys
 import inputs.fetch
 
@@ -37,8 +38,8 @@ class SelectMenu:
         Clear the menu from terminal
         """
         for _ in range(num_lines):
-            # Move up and clear line
-            sys.stdout.write('\x1b[1A\x1b[2K')  
+            controls.up()
+            controls.clear_line(2)  
         sys.stdout.flush()
     
     def _draw_menu(self) -> None:
@@ -64,8 +65,7 @@ class SelectMenu:
         Return a string, the choosen index.
         """
         try:
-            # Hide cursor.
-            sys.stdout.write('\x1b[?25l')
+            controls.cursor_hide()
 
             self._draw_menu()
             
@@ -89,7 +89,7 @@ class SelectMenu:
         
         finally:
             # Show cursor again
-            sys.stdout.write('\x1b[?25h')
+            controls.cursor_show()
             sys.stdout.flush()
         
         return self.options[self.selected_index]
@@ -108,5 +108,5 @@ def main() -> None:
         options=menu_options,
         prompt="Main CLI test: "
     )
-    sel = menu.show()
+    sel: str = menu.show()
     print(sel)
