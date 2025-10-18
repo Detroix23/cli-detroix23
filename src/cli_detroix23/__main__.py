@@ -45,6 +45,7 @@ def main() -> None:
                     "Shapes.Base",
                     "Base.Colors",
                     "Inputs.Keys",
+                    "Inputs.Stdin",
                     "Quit",
                 ],
                 models.select_gh_style("Select widget.")
@@ -79,6 +80,9 @@ def main() -> None:
 
             elif settings.choice == "Inputs.Keys":
                 inputs.exemples.run_basic_keys()
+
+            elif settings.choice == "Inputs.Stdin":
+                inputs.exemples.run_sys_reading()
 
             elif settings.choice == "Quit":
                 style.printc("Quiting.", style=style.Color.YELLOW)
