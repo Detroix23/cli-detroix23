@@ -48,7 +48,7 @@ def compare(key_a: Union[str, inputs.keys.Key], key_b: Union[str, inputs.keys.Ke
     comparison: bool = key_a == key_b
     return comparison
 
-def fetch_target(info: inputs.keys.Info) -> None:
+def fetch_target(info: inputs.keys.Info, delay: float = 0.02) -> None:
     """
     Run a loop in a separate thread. \r
     Send pressed key by reference in the given `info` object.

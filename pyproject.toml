@@ -1,6 +1,6 @@
 [project]
-name = "CLI_Detroix23"
-version = "0.0.1"
+name = "cli_detroix23"
+version = "0.1.0"
 description = "A CLI all-in tool made for myself."
 authors = [
     { name="Detroix23", email="detroix23@gmail.com" }
@@ -28,3 +28,4 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 py-modules = []
+

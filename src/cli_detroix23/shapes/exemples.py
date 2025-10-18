@@ -15,9 +15,16 @@ class Exemple1(screen.Screen):
         frame_delay: float = 1, 
         global_style: str = "", 
         debug: bool = False, 
-        deactivate_screen: bool = True
+        deactivate_screen: bool = False
     ) -> None:
-        super().__init__(void_char, frame_delay, global_style, debug, deactivate_screen)
+        super().__init__(
+            void_char, 
+            frame_delay, 
+            global_style, 
+            debug,
+            deactivate_screen,
+            read_keys=True
+        )
 
         self.rect1 = base.Rectangle(self, maths.Vector2D(4, 5), maths.Size(8, 4), "#", True)
         self.hrect1 = base.RectangleHollow(self, maths.Vector2D(7, 8), maths.Size(9, 6), "@", 2, True)
@@ -50,7 +57,7 @@ For the sprite!
 """)
 
     ex1 = Exemple1(
-        frame_delay=1
+        frame_delay=1,
     )
 
     ex1.run(Exemple1.updater, Exemple1.drawer)

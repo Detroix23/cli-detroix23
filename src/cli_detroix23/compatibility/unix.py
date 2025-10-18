@@ -14,24 +14,43 @@ import compatibility.types as types
 FILE_ID: Final[int] = sys.stdin.fileno()
 SETTINGS: Final[types.Attr] = termios.tcgetattr(FILE_ID)
 
+KEYS: Final[list[str]] = ["iflag", "oflag", "cflag", "lflag", "ispeed", "ospeed", "cc"]
+# Adapted for Linux. 
+CC: Final[list[str]] = [
+    "VEOF", "VEOL", "VERASE", "VINTR", "VKILL", "VLNEXT", 
+    "VMIN", "VQUIT", "VREPRINT", "VSTART", "VSTATUS", "VSTOP", "VSUSP", "VSWTCH", "VTIME", "VWERASE"
+]
+
+def get_settings(file_id: int) -> types.Attr:
+    """
+    Return terminal attributes.
+    """
+    return termios.tcgetattr(FILE_ID)
+
+def settings_difference(s1: types.Attr, s2: types.Attr) -> dict[str, tuple[int, int]]:
+    """
+    Return a dict of Attr differences.
+    """
+    differences: dict[str, tuple[int, int]] = dict()
+    for (index, (e1, e2)) in enumerate(zip(s1, s2)):
+        if e1 != e2 and not isinstance(e1, list) and not isinstance(e2, list):
+            differences[KEYS[index]] = (int(e1), int(e2)) 
+
+    return differences
+
 def set_to_default() -> None:
     """
     Set back to the original settings the terminal.
     """
     termios.tcsetattr(FILE_ID, termios.TCSANOW, SETTINGS)
+    sys.stdout.flush()
+    sys.stdin.flush()
 
 def print_attr(settings: types.Attr) -> None:
     """
     Print the given attributes.
-
-    (not in POSIX; 027, ETB, Ctrl-W) Word erase (WERASE). Recognized when ICANON and IEXTEN are set, and then not passed as input. 
     """
-    KEYS: Final[list[str]] = ["iflag", "oflag", "cflag", "lflag", "ispeed", "ospeed", "cc"]
-    # Adapted for Linux. 
-    CC: Final[list[str]] = [
-        "VEOF", "VEOL", "VERASE", "VINTR", "VKILL", "VLNEXT", 
-        "VMIN", "VQUIT", "VREPRINT", "VSTART", "VSTATUS", "VSTOP", "VSUSP", "VSWTCH", "VTIME", "VWERASE"
-    ]
+    global CC, KEYS
 
     print("ATTR")
     for i, value in enumerate(settings):
@@ -49,6 +68,26 @@ def print_attr(settings: types.Attr) -> None:
 
     print()
 
+
+def test_present_settings() -> None:
+    attrs: Final[types.Attr] = get_settings(FILE_ID)
+        
+    print("Print test")
+    print("Print test")
+    print("Print test")
+    print("Print test")
+
+    sys.stdout.write("Write test\n")
+    sys.stdout.write("Write test\n")
+    sys.stdout.write("Write test\n")
+    sys.stdout.write("Write test\n")
+    sys.stdout.write("Write test\n")
+
+    if SETTINGS != attrs:
+        raise ValueError(f"""Settings not matching. 
+=> {settings_difference(SETTINGS, attrs)}
+=> {get_settings(FILE_ID)}
+""")
 
 def main() -> None:
     """

@@ -7,6 +7,7 @@ import test.debug
 import base.style as style
 import base.models as models
 import base.colors
+import base.controls
 import base.exemples
 import animations.exemples
 import animations.loadings as loadings
@@ -97,6 +98,10 @@ def main() -> None:
 
             test.debug.debug_print("__main__.main - End CLI reseted settings.")
             compatibility.unix.set_to_default()
+
+        print()
+        base.controls.cursor_show()
+        base.controls.fin()
 
 if __name__ == "__main__":
     main()

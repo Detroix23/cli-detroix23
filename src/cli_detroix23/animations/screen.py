@@ -8,7 +8,7 @@ import os
 import sys
 import time
 import threading
-from typing import Callable, Union, Optional
+from typing import Callable, Union, Optional, Final
 from enum import Enum
 
 import compatibility.plateform
@@ -16,6 +16,7 @@ import compatibility.unix
 import test.debug
 import maths.maths as maths
 import base.style as style
+import base.controls as controls
 import inputs.keys
 import inputs.fetch
 
@@ -54,7 +55,7 @@ class Screen:
         global_style: str = "",
         debug: bool = False,
         deactivate_screen: bool = False,
-        read_keys: bool = True,
+        read_keys: bool = False,
     ) -> None:
         self.running = False
         self.size = maths.Size(*self.update_size())
@@ -72,33 +73,102 @@ class Screen:
         self._key_informations = inputs.keys.Info()
         self.threads = dict()
 
-    def _draw(self) -> None:
-        # Ensure drawer.
-        while self.running and self.drawer:
-            # Clear the whole screen.
-            if not (self.deactivate_screen or self.debug):
-                sys.stdout.write("\033[H\033[3J")
-                sys.stdout.flush()
+    def start_threads(self) -> int:
+        """
+        Create and start `keys`, `draw` threads. \r
+        Returns the number of threads created.
+        """
+        ENABLE: Final[dict[str, bool]] = {
+            "keys": self.read_keys,
+            "loop": True
+        }
 
-            test.debug.debug_print(f"Screen._draw - User draw.")
+        # Threads.
+        if ENABLE["keys"]:
+            test.debug.debug_print("Created thread: `keys`.")
+            self.threads["keys"] = threading.Thread(
+                target=inputs.fetch.fetch_target,
+                args=(self._key_informations,),
+            )
+            
+        if ENABLE["loop"]:
+            self.threads["loop"] = threading.Thread(
+                target=self._game_loop,
+            )
+            test.debug.debug_print("Created thread: `loop`.")
+
+        for name, thread in self.threads.items():
+            test.debug.debug_print(f"Started thread: {name}")
+            thread.start()
+
+        return len(self.threads)
+
+    def join_threads(self) -> int:
+        """
+        Joins all running threads. \r
+        Return thread count.
+        """
+        for name, thread in self.threads.items():
+            test.debug.debug_print(f"Joining thread: {name}")
+            thread.join()
+
+        return len(self.threads)
+
+    def _draw(self) -> None:
+        """
+        Local draw function for 1 frame.
+        """
+        # Clear the whole screen.
+        if not (self.deactivate_screen or self.debug):
+            controls.home()
+            controls.clear_to_bottom()
+            sys.stdout.flush()
+
+        test.debug.debug_print(f"Screen._draw - User draw.")
+        if self.drawer is not None:
             self.drawer(self)
 
-            # Char table
-            test.debug.debug_print(f"Screen._draw - Char table.")
-            if self.debug:
-                print(fr"{self.char_table}")
-            if not (self.debug or self.deactivate_screen):
-                self.print_char_table()
+        # Char table
+        test.debug.debug_print(f"Screen._draw - Char table.")
+        if self.debug:
+            print(f"{repr(self.char_table)}")
+        if not (self.debug or self.deactivate_screen):
+            self.print_char_table()
+        
+        self.previous_char_table = self.char_table
+        self.char_table = self.blank_char_table()
+        
+        test.debug.debug_print(f"Screen._draw - Size: {self.size}")
+        sys.stdout.flush()
             
-            self.previous_char_table = self.char_table
-            self.char_table = self.blank_char_table()
-            
-            test.debug.debug_print(f"Screen._draw - Size: {self.size}")
-            sys.stdout.flush()
-            
+        return
+
+    def _update(self) -> None:
+        """
+        Local update function for 1 frame.
+        """
+        # Update.
+        self.size = maths.Size(*self.update_size())
+
+        # User updater function.
+        if self.updater is not None:
+            self.updater(self)
+
+        return
+
+    def _game_loop(self) -> None:
+        """
+        Main game loop, running on thread, on a given FPS.
+        """
+        while self.running:
+            self._update()
+            self._draw()
+
             # Frames
             time.sleep(self.frame_delay)
             self._frames += 1
+
+        return
 
     def run(
         self,       
@@ -114,41 +184,16 @@ class Screen:
         self.running = True
         self._key_informations.running = True
 
-        # Threads.
-        if self.read_keys:
-            test.debug.debug_print("Created thread: keys.")
-
-            self.threads["keys"] = threading.Thread(
-                target=inputs.fetch.fetch_target,
-                args=(self._key_informations,),
-            )
-            
-        test.debug.debug_print("Created thread: draw.")
-        
-        self.threads["draw"] = threading.Thread(
-            target=self._draw,
-        )
-
-        for name, thread in self.threads.items():
-            test.debug.debug_print(f"Started thread: {name}")
-            thread.start()
+        self.start_threads()
 
         try:
-            # Main update loop
+            # Backend loop, no delay.
             test.debug.debug_print("Started main loop.")
             while self.running:
                 # Keyboard interrupt.
                 if self._key_informations.current == inputs.keys.Keys.INTERRUPT:
                     raise KeyboardInterrupt(f"(X) - KeyboardInterrupt. Felt from `Screen.run`.")
-
-                # Update.
-                self.size = maths.Size(*self.update_size())
-
-                # User updater function.
-                self.updater(self)
-
-                time.sleep(0.02)
-
+            
         except KeyboardInterrupt:
             self.running = False
             self._key_informations.running = False
@@ -161,9 +206,7 @@ class Screen:
             self.running = False
             self._key_informations.running = False
 
-            for name, thread in self.threads.items():
-                test.debug.debug_print(f"Joining thread: {name}")
-                thread.join()
+            self.join_threads()
 
             if compatibility.plateform.OS == compatibility.plateform.Os.UNIX:
                 test.debug.debug_print("Screen.run - End: reset CL settings.")
