@@ -4,8 +4,8 @@ Made for me, by me.
 
 ## General setup.
 - Using Pip, install as **package**.
-   - `py -m pip install cli_detroix23` (W.I.P.)
-   - Dowload the TAR.GZ archive in the `dist` folder, and then `py -m pip install /path/to/archive`.
+   - `py -m pip install cli_detroix23`
+   - Download the TAR.GZ archive in the `dist` folder, and then `py -m pip install /path/to/archive`.
 - Install as a **standalone project**, to test features.
    1. Download the ZIP archive (*Code* button).
    2. Go into the the freshly unzipped directory.
@@ -16,7 +16,7 @@ Made for me, by me.
    5. Run the main using `py ./cli_detroix23/src/`
 
 ## Windows.
-_(because, obviously)_ 
+_(because... obviously)_ 
 In most cases, VT100 and ANSI color and escape characters will not be enabled in your terminal. To activate them, run: 
 	`./windows/enableVT100.reg`.
 

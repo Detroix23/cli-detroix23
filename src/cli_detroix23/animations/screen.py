@@ -11,8 +11,7 @@ import threading
 from typing import Callable, Union, Optional, Final
 from enum import Enum
 
-import compatibility.plateform
-import compatibility.unix
+from cli_detroix23.compatibility import plateform
 import test.debug
 import maths.maths as maths
 import base.style as style
@@ -208,7 +207,9 @@ class Screen:
 
             self.join_threads()
 
-            if compatibility.plateform.OS == compatibility.plateform.Os.UNIX:
+            if plateform.OS == plateform.Os.UNIX:
+                import compatibility.unix
+                
                 test.debug.debug_print("Screen.run - End: reset CL settings.")
                 compatibility.unix.set_to_default()
 

@@ -7,6 +7,9 @@ from typing import Final
 
 _POSSIBLE_ESC: Final[set[str]] = {"\033", "\x1b"}
 ESC: Final[str] = "\x1b"
+"""
+General escape character.
+"""
 WINDOWS: Final[str] = "\xe0"
 
 NICE_MAP: Final[dict[str, str]] = {

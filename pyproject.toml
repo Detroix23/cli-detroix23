@@ -1,6 +1,6 @@
 [project]
 name = "cli_detroix23"
-version = "0.1.0"
+version = "0.4.0"
 description = "A CLI all-in tool made for myself."
 authors = [
     { name="Detroix23", email="detroix23@gmail.com" }
@@ -15,9 +15,7 @@ dependencies = [
 ]
 readme = "README.md"
 license = "CC-BY-4.0"
-license-files = [
-    "LICENSE.md"
-]
+license-files = ["LICENSE.md"]
 
 [project.urls]
 Repository = "https://github.com/Detroix23/"
@@ -25,7 +23,3 @@ Repository = "https://github.com/Detroix23/"
 [build-system]
 requires = ["setuptools >= 77.0.3"]
 build-backend = "setuptools.build_meta"
-
-[tool.setuptools]
-py-modules = []
-

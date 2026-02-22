@@ -1,0 +1,41 @@
+Metadata-Version: 2.4
+Name: cli_detroix23
+Version: 0.4.0
+Summary: A CLI all-in tool made for myself.
+Author-email: Detroix23 <detroix23@gmail.com>
+License-Expression: CC-BY-4.0
+Project-URL: Repository, https://github.com/Detroix23/
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: OS Independent
+Classifier: Natural Language :: English
+Requires-Python: >=3.12
+Description-Content-Type: text/markdown
+License-File: LICENSE.md
+Dynamic: license-file
+
+# CLI
+Made for me, by me.
+***Express your creativity, only in the terminal.***
+
+## General setup.
+- Using Pip, install as **package**.
+   - `py -m pip install cli_detroix23`
+   - Download the TAR.GZ archive in the `dist` folder, and then `py -m pip install /path/to/archive`.
+- Install as a **standalone project**, to test features.
+   1. Download the ZIP archive (*Code* button).
+   2. Go into the the freshly unzipped directory.
+   3. Create a **virtual environement** using `py -m venv ./.venv`.
+   4. Source into it.
+       - Windows: `./.venv/Scripts/activate`.
+       - Linux: `source ./.venv/bin/activate`.
+   5. Run the main using `py ./cli_detroix23/src/`
+
+## Windows.
+_(because... obviously)_ 
+In most cases, VT100 and ANSI color and escape characters will not be enabled in your terminal. To activate them, run: 
+	`./windows/enableVT100.reg`.
+
+## License.
+_cf._ LICENSE.md
+This project is licensed under **CC-BY-4.0**.
+ 

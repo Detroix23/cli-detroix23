@@ -1,10 +1,10 @@
 # Venv
-/venv
-/.venv
+/.venv*
 
 # Python
 **.pyc
 */__pycache__
+/dist
 
 # Doc
 !README.md

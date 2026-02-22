@@ -4,7 +4,6 @@ select_menu.py
 """
 import sys
 
-# import compatibility.plateform as plateform
 import base.style as style
 import base.controls as controls
 import inputs.keys as keys
