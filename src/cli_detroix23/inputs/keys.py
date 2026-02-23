@@ -3,15 +3,15 @@ CLI - Inputs
 keys.py
 """
 import dataclasses
-from typing import Union, Optional 
+from typing import Union, Optional, Final
 
-import compatibility.plateform as plateform
-import base.specials as specials
+from cli_detroix23.compatibility import plateform
+from cli_detroix23.base import specials
 
 class Key:
     """
     Store the name and the codes of a specific key. \r
-    It is immmutable. To get the OS corresponding key's raw ASCII code, use: \n
+    It is immutable. To get the OS corresponding key's raw ASCII code, use: \n
     ```python
         Key.get()
     ```
@@ -85,21 +85,21 @@ class Keys:
         UP = Key("Arrow up", "\\x1b[A", "\\x1b[A")
     ``` 
     """
-    ESC = Key("Escape", specials.ESC, specials.ESC)
-    UP = Key("Arrow up", specials.WINDOWS + "H", specials.ESC +"[A")
-    DOWN = Key("Arrow down", specials.WINDOWS + "P", specials.ESC + "[B")
-    LEFT = Key("Arrow left", specials.WINDOWS + "[C", specials.ESC + "[C")
-    RIGHT = Key("Arrow down", specials.WINDOWS + "[D", specials.ESC + "[D")
-    RETURN = Key("Carriage return", "\r", "\r")
-    LINE = Key("New line", "\n", "\n")
-    SPACE = Key.new_common(" ")
-    INTERRUPT = Key("Keyboard interrupt", "\x03", "\x03")
+    ESC: Final[Key] = Key("Escape", specials.ESC, specials.ESC)
+    UP: Final[Key] = Key("Arrow up", str(specials.WINDOWS) + "H", specials.ESC +"[A")
+    DOWN: Final[Key] = Key("Arrow down", str(specials.WINDOWS) + "P", specials.ESC + "[B")
+    LEFT: Final[Key] = Key("Arrow left", str(specials.WINDOWS) + "K", specials.ESC + "[C")
+    RIGHT: Final[Key] = Key("Arrow right", str(specials.WINDOWS) + "M", specials.ESC + "[D")
+    RETURN: Final[Key] = Key("Carriage return", "\r", "\r")
+    LINE: Final[Key] = Key("New line", "\n", "\n")
+    SPACE: Final[Key] = Key.new_common(" ")
+    INTERRUPT: Final[Key] = Key("Keyboard interrupt", "\x03", "\x03")
 
 
 @dataclasses.dataclass
 class Info:
     """
-    An object to store keys informations, modified by reference. \r
+    An object to store keys information, modified by reference. \r
     Used for threading.
     """
     running: bool = False
@@ -124,4 +124,4 @@ class Info:
 
 
 if __name__ == "__main__":
-    print("cf. Exemples.")
+    exit("cf. Examples.")

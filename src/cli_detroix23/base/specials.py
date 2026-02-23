@@ -10,7 +10,8 @@ ESC: Final[str] = "\x1b"
 """
 General escape character.
 """
-WINDOWS: Final[str] = "\xe0"
+MSVCRT_GETCH_SPECIALS: Final[set[int]] = {b"\000"[0], b"\xe0"[0]}
+WINDOWS: Final[bytes] = b"\xe0"
 
 NICE_MAP: Final[dict[str, str]] = {
     "\x00": "Null",

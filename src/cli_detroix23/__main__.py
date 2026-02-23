@@ -1,28 +1,27 @@
 #!/.venv/bin/python
 """
-main.py
+# CLI.
+src/cli_detroix23/__main__.py
+
+Main script to test, and show examples of the library.
 """
-import compatibility.plateform as plateform
-import test.debug
-import base.style as style
-import base.models as models
-import base.colors
-import base.controls
-import base.exemples
-import animations.exemples
-import animations.loadings as loadings
-import inputs.start
-import inputs.select_menu as select
-import inputs.exemples
-import shapes.exemples
+from cli_detroix23.compatibility import plateform
+from cli_detroix23 import test
+from cli_detroix23 import base
+from cli_detroix23.base import style, models
+from cli_detroix23 import animations
+from cli_detroix23.animations import loadings
+from cli_detroix23 import inputs
+from cli_detroix23.inputs import select_menu
+from cli_detroix23 import shapes
 
 def main() -> None:
     print("# CLI module for Python, by Detroix23.")
     if plateform.OS == plateform.Os.UNIX:
-        import compatibility.unix
+        from cli_detroix23.compatibility import unix
 
         print(f"Running on UNIX.")
-        compatibility.unix.print_attr(compatibility.unix.SETTINGS)
+        unix.print_attr(unix.SETTINGS)
     
 
     settings: inputs.start.Settings = inputs.start.Settings()
@@ -35,7 +34,7 @@ def main() -> None:
     settings.user_in = True
     try:
         while settings.user_in:
-            main_select: select.SelectMenu = select.SelectMenu(
+            main_select: select_menu.SelectMenu = select_menu.SelectMenu(
                 [
                     "Animations.Matrix",
                     "Animations.GameOfLife",
@@ -98,10 +97,10 @@ def main() -> None:
 
     finally:
         if plateform.OS == plateform.Os.UNIX:
-            import compatibility.unix
+            from cli_detroix23.compatibility import unix
 
             test.debug.debug_print("__main__.main - End CLI reseted settings.")
-            compatibility.unix.set_to_default()
+            unix.set_to_default()
 
         print()
         base.controls.cursor_show()

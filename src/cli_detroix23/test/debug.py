@@ -5,7 +5,7 @@ debug.py
 import sys
 from typing import Optional
 
-ENABLE_DEBUG: bool = False
+ENABLE_DEBUG: bool = True
 
 def debug_print(message: str, *, end: str = "\n", style: Optional[str] = None, prefix: str = " ! ") -> None:
     """

@@ -4,10 +4,9 @@ select_menu.py
 """
 import sys
 
-import base.style as style
-import base.controls as controls
-import inputs.keys as keys
-import inputs.fetch
+from cli_detroix23.base import style, controls
+from cli_detroix23 import test
+from cli_detroix23.inputs import fetch, keys
 
 class SelectMenu:
     """
@@ -30,12 +29,15 @@ class SelectMenu:
         """
         Get a single keypress from stdin
         """
-        return inputs.fetch.get()
+        return fetch.get()
 
     def _clear_menu(self, num_lines: int) -> None:
         """
-        Clear the menu from terminal
+        Clear the menu from terminal, if isn't `ENABLE_DEBUG`.
         """
+        if test.debug.ENABLE_DEBUG:
+            return
+
         for _ in range(num_lines):
             controls.up()
             controls.clear_line(2)  
@@ -46,8 +48,8 @@ class SelectMenu:
         Draw the menu with current selection highlighted
         """
         print(self.prompt)
-        for i, option in enumerate(self.options):
-            if i == self.selected_index:
+        for index, option in enumerate(self.options):
+            if index == self.selected_index:
                 # Highlight selected option (style).
                 style.printc(
                     f"{self.select_character}{option}",
@@ -61,7 +63,7 @@ class SelectMenu:
         """
         Display the menu and handle user input.
         Call to display to user.
-        Return a string, the choosen index.
+        Return a string, the chosen index.
         """
         try:
             controls.cursor_hide()
