@@ -11,8 +11,7 @@ try:
     from cli_detroix23.compatibility import platform
     from cli_detroix23.base import specials
     from cli_detroix23.inputs import keys
-    from cli_detroix23.test import debug
-
+    
     def get_key(*, allow_keyboard_interrupt: bool) -> keys.Key:
         """
         Get key at one moment. \n
@@ -22,7 +21,7 @@ try:
         # Special key prefix on Windows
         if key == specials.WINDOWS:  
             key += msvcrt.getch()
-            debug.debug_print(f"inputs.window.get_key() key: {key}")
+            # debug.debug_print(f"inputs.window.get_key() key: {key}")
         # Ctrl+C.
         elif key == b"\x03" and allow_keyboard_interrupt:
             raise KeyboardInterrupt(f"(X) - Keyboard interrupt while getting key ({repr(key)}).")

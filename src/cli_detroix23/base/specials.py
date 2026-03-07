@@ -45,18 +45,20 @@ NICE_MAP: Final[dict[str, str]] = {
     "\x1b[?25h": "Cursor show"
 }
 
-def filter_map(map: dict[str, str], string: str) -> list[str]:
+def filter_map(current_map: dict[str, str], key: bytes) -> list[str]:
     """
     Return a list of str with the corresponding string of the given map, if exists.
     Else, puts the character itself.
     """
+    string = str(key)
     result: list[str] = list()
-    if string in map:
-        result = [map[string]]
+    if string in current_map:
+        result = [current_map[string]]
+        
     elif len(string) > 1:
         for char in string:
-            if char in map:
-                result.append(map[char])
+            if char in current_map:
+                result.append(current_map[char])
             else:
                 result.append(char)
     else:

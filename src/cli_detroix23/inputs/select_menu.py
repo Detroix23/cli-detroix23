@@ -4,8 +4,8 @@ select_menu.py
 """
 import sys
 
+from cli_detroix23.compatibility import debug
 from cli_detroix23.base import style, controls
-from cli_detroix23 import test
 from cli_detroix23.inputs import fetch, keys
 
 class SelectMenu:
@@ -35,7 +35,7 @@ class SelectMenu:
         """
         Clear the menu from terminal, if isn't `ENABLE_DEBUG`.
         """
-        if test.debug.ENABLE_DEBUG:
+        if debug.ENABLE_DEBUG:
             return
 
         for _ in range(num_lines):

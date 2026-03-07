@@ -11,8 +11,7 @@ import threading
 from typing import Callable, Union, Optional, Final
 from enum import Enum
 
-from cli_detroix23.compatibility import platform
-from cli_detroix23 import test
+from cli_detroix23.compatibility import platform, debug
 from cli_detroix23.maths import maths
 from cli_detroix23.base import style, controls
 from cli_detroix23.inputs import keys, fetch
@@ -82,7 +81,7 @@ class Screen:
 
         # Threads.
         if ENABLE["keys"]:
-            test.debug.debug_print("Created thread: `keys`.")
+            debug.debug_print("Created thread: `keys`.")
             self.threads["keys"] = threading.Thread(
                 target=fetch.fetch_target,
                 args=(self._key_information,),
@@ -92,10 +91,10 @@ class Screen:
             self.threads["loop"] = threading.Thread(
                 target=self._game_loop,
             )
-            test.debug.debug_print("Created thread: `loop`.")
+            debug.debug_print("Created thread: `loop`.")
 
         for name, thread in self.threads.items():
-            test.debug.debug_print(f"Started thread: {name}")
+            debug.debug_print(f"Started thread: {name}")
             thread.start()
 
         return len(self.threads)
@@ -106,7 +105,7 @@ class Screen:
         Return thread count.
         """
         for name, thread in self.threads.items():
-            test.debug.debug_print(f"Joining thread: {name}")
+            debug.debug_print(f"Joining thread: {name}")
             thread.join()
 
         return len(self.threads)
@@ -121,12 +120,12 @@ class Screen:
             controls.clear_to_bottom()
             sys.stdout.flush()
 
-        test.debug.debug_print(f"Screen._draw - User draw.")
+        debug.debug_print(f"Screen._draw - User draw.")
         if self.drawer is not None:
             self.drawer(self)
 
         # Char table
-        test.debug.debug_print(f"Screen._draw - Char table.")
+        debug.debug_print(f"Screen._draw - Char table.")
         if self.debug:
             print(f"{repr(self.char_table)}")
         if not (self.debug or self.deactivate_screen):
@@ -135,7 +134,7 @@ class Screen:
         self.previous_char_table = self.char_table
         self.char_table = self.blank_char_table()
         
-        test.debug.debug_print(f"Screen._draw - Size: {self.size}")
+        debug.debug_print(f"Screen._draw - Size: {self.size}")
         sys.stdout.flush()
             
         return
@@ -185,7 +184,7 @@ class Screen:
 
         try:
             # Backend loop, no delay.
-            test.debug.debug_print("Started main loop.")
+            debug.debug_print("Started main loop.")
             while self.running:
                 # Keyboard interrupt.
                 if self._key_information.current == keys.Keys.INTERRUPT:
@@ -208,7 +207,7 @@ class Screen:
             if platform.OS == platform.Os.UNIX:
                 from cli_detroix23.compatibility import unix
                 
-                test.debug.debug_print("Screen.run - End: reset CL settings.")
+                debug.debug_print("Screen.run - End: reset CL settings.")
                 unix.set_to_default()
 
             sys.stdout.flush()
@@ -220,7 +219,7 @@ class Screen:
     @property
     def frames(self) -> int:
         """
-        Get the value of `frames`. Semi-private proprety: read-only.
+        Get the value of `frames`. Semi-private property: read-only.
         """
         return self._frames
 
@@ -250,7 +249,7 @@ class Screen:
         try:
             self.char_table[int(position.y)][int(position.x)] = ' '
         except IndexError:
-            style.printc(f"(!) - Couldn't erase character at {position}: inexistant.", style.Color.YELLOW)
+            style.printc(f"(!) - Couldn't erase character at {position}: doesn't exist.", style.Color.YELLOW)
 
     def _write_char(self, char: str, position: maths.Vector2D, styles: str = "") -> None:
         """
@@ -366,4 +365,4 @@ class Screen:
 
 
 if __name__ == "__main__":
-    print("See `animations/exemples.py`.")
+    print("See `animations/examples.py`.")

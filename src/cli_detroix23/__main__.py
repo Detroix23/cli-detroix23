@@ -5,36 +5,36 @@ src/cli_detroix23/__main__.py
 
 Main script to test, and show examples of the library.
 """
-from cli_detroix23.compatibility import platform
-from cli_detroix23 import test, base, inputs, shapes, animations
+from cli_detroix23.compatibility import platform, debug
+from cli_detroix23 import base, inputs, shapes, animations
 from cli_detroix23.base import style, models
 from cli_detroix23.animations import loadings
 from cli_detroix23.inputs import select_menu
 
 def main() -> None:
-    print("# CLI module for Python, by Detroix23.")
+    print("# CLI module for Python, by Detroix23.\n\n")
 
     # Settings and arguments.
     settings: inputs.start.Settings = inputs.start.Settings()
 
     settings.read_arguments()
     if settings.enable_debug:
-        test.debug.ENABLE_DEBUG = True
+        debug.ENABLE_DEBUG = True
     
-    test.debug.debug_print(f"__main__.main() Args: {settings.args}")
+    debug.debug_print(f"__main__.main() Args: {settings.args}")
 
     # OS-wise configuration.
     if platform.OS == platform.Os.UNIX:
         from cli_detroix23.compatibility import unix
 
-        test.debug.debug_print("__main__.main() Running on UNIX.")
+        debug.debug_print("__main__.main() Running on UNIX.")
         unix.print_attr(unix.SETTINGS)
     
     elif platform.OS == platform.Os.WINDOWS:
-        test.debug.debug_print("__main__.main() Running on WINDOWS.")
+        debug.debug_print("__main__.main() Running on WINDOWS.")
 
-    if test.debug.ENABLE_DEBUG:
-        test.debug.debug_print(f"__main__.main() Debug enabled.")
+    if debug.ENABLE_DEBUG:
+        debug.debug_print(f"__main__.main() Debug enabled.")
 
     # Selection loop.
     settings.user_in = True
@@ -66,7 +66,7 @@ def main() -> None:
                 animations.examples.run_game_of_life()
 
             elif settings.choice == "Base.Style":
-                base.exemples.main()
+                base.examples.main()
 
             elif settings.choice == "Animations.Loadings":
                 loadings.main()
@@ -99,13 +99,13 @@ def main() -> None:
 
     except KeyboardInterrupt:
         settings.user_in = False
-        style.printc("Quiting (Ctrl+C).", style=style.Color.YELLOW)
+        style.printc("Quitting (Ctrl+C).", style=style.Color.YELLOW)
 
     finally:
         if platform.OS == platform.Os.UNIX:
             from cli_detroix23.compatibility import unix
 
-            test.debug.debug_print("(?) __main__.main End of CLI: reset settings.")
+            debug.debug_print("(?) __main__.main End of CLI: reset settings.")
             unix.set_to_default()
 
         print()

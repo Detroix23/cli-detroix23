@@ -5,8 +5,7 @@ src/cli_detroix23/inputs/fetch.py
 import threading
 from typing import Union
 
-from cli_detroix23 import test
-from cli_detroix23.compatibility import platform
+from cli_detroix23.compatibility import platform, debug
 from cli_detroix23.inputs import keys
 
 def get(*, allow_keyboard_interrupt: bool = True) -> keys.Key:
@@ -31,7 +30,7 @@ def get(*, allow_keyboard_interrupt: bool = True) -> keys.Key:
     else:
         raise OSError(f"(X) - Keys.get_key: Unrecognized OS ({platform.OS}).")
 
-    test.debug.debug_print(f"inputs.fetch.get() Key: {key}")
+    debug.debug_print(f"inputs.fetch.get() Key: {key}")
 
     return key
 
@@ -49,21 +48,21 @@ def fetch_target(info: keys.Info) -> None:
     Run a loop in a **separate thread**.  
     Send pressed key by reference in the given `info` object.
     """
-    test.debug.debug_print("inputs.fetch.fetch_target() Starting loop.")
+    debug.debug_print("inputs.fetch.fetch_target() Starting loop.")
     
     current: keys.Key
     while info.running:
         current = get(allow_keyboard_interrupt=False)
-        test.debug.debug_print(f"compare.fetch_target - Registered key: {current}")
+        debug.debug_print(f"compare.fetch_target - Registered key: {current}")
         info.new_key(current)
 
-    test.debug.debug_print("inputs.fetch.fetch_target() Finished loop.")
+    debug.debug_print("inputs.fetch.fetch_target() Finished loop.")
 
 def fetch(info: keys.Info) -> None:
     """
     Creates the thread, calling `fetch_target`.
     """
-    test.debug.debug_print("keys.fetch - Starting thread.")
+    debug.debug_print("keys.fetch - Starting thread.")
     key_thread = threading.Thread(
         target=fetch_target, 
         args=(info,), 

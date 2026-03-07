@@ -2,8 +2,7 @@
 CLI - Base / Style.
 exemples.py
 """
-import base.style as style
-import base.code as code
+from cli_detroix23.base import style, code
 
 def main() -> None:
     style.Style.display_all_rendition_subset()
