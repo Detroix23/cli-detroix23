@@ -1,7 +1,8 @@
 """
-CLI - maths
-maths.py
-Basic maths stuff.
+CLI - Maths
+src/cli_detroix23/maths/maths.py
+
+Basic maths structures.
 """
 import os
 import math

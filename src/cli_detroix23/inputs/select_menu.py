@@ -1,10 +1,11 @@
 """
-CLI - Inputs
-select_menu.py
+# CLI - Inputs
+src/cli_detroix23/inputs/select_menu.py
 """
+
 import sys
 
-from cli_detroix23.compatibility import debug
+from cli_detroix23.compatibility import defaults, debug
 from cli_detroix23.base import style, controls
 from cli_detroix23.inputs import fetch, keys
 
@@ -80,13 +81,13 @@ class SelectMenu:
                 elif key == keys.Keys.LINE or key == keys.Keys.RETURN:
                     break
                 elif key == keys.Keys.INTERRUPT:
-                    raise KeyboardInterrupt(f"{style.Color.YELLOW}(!) - Keyboard Interrupt. {style.END}")      
+                    raise KeyboardInterrupt(f"{style.Color.YELLOW}{defaults.LOG_INFO}Keyboard Interrupt. {style.END}")      
 
                 # Clear and redraw menu
                 self._clear_menu(len(self.options) + 1)
                 self._draw_menu()
         except KeyboardInterrupt:
-            raise KeyboardInterrupt(f"{style.Color.YELLOW}(!) - Keyboard Interrupt. {style.END}")
+            raise KeyboardInterrupt(f"{style.Color.YELLOW}{defaults.LOG_INFO}Keyboard Interrupt. {style.END}")
         
         finally:
             # Show cursor again

@@ -1,7 +1,8 @@
 """
-CLI - Shapes
-sprites.py
+# CLI - Shapes.
+src/cli_detroix23/shapes/sprites.py
 """
+
 from cli_detroix23.maths import maths, transformations
 from cli_detroix23.animations import screen
 from cli_detroix23.shapes import base

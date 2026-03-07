@@ -1,7 +1,8 @@
 """
-CLI - Inputs
-keys.py
+$ CLI - Inputs.
+src/cli_detroix23/inputs/keys.py  
 """
+
 import dataclasses
 from typing import Optional, Final
 

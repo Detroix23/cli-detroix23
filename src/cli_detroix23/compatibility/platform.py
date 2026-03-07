@@ -1,7 +1,15 @@
 """
 # CLI - Compatibility
 src/cli_detroix23/compatibility/platform.py
+
+_This file runs on every OS._
+
+## Remainders:
+`os.name`: `str`.
+- `posix`: Unix, Linux;
+- `nt`: Windows.
 """
+
 import os
 from typing import Final
 from enum import Enum
@@ -19,4 +27,3 @@ OS: Final[Os] = Os.UNIX if os.name == 'posix' else Os.WINDOWS
 """
 Define **current** OS.
 """
-

@@ -1,6 +1,6 @@
 """
-CLI - Style/ Base
-code.py
+# CLI - Base.
+src/cli_detroix23/base/code.py
 """
 from typing import Union
 
@@ -47,7 +47,7 @@ class Code:
         elif isinstance(other, Code):
             return Code(codes=self.codes + other.codes)
         else:
-            raise ValueError(f"(X) - `Code` addiction must be `str` or `Code` ({repr(other)}).")
+            raise ValueError(f"`Code` addiction must be `str` or `Code` ({repr(other)}).")
  
 
 def code_clean(string: str) -> int:

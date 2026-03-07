@@ -2,6 +2,8 @@
 # CLI - Inputs.
 src/cli_detroix23/inputs/fetch.py  
 """
+
+import os
 import threading
 from typing import Union
 
@@ -15,20 +17,18 @@ def get(*, allow_keyboard_interrupt: bool = True) -> keys.Key:
 
     key: keys.Key
 
-    if platform.OS == platform.Os.UNIX:
+    if os.name == "posix":
         from cli_detroix23.inputs import unix
 
         key = unix.get_key(allow_keyboard_interrupt=allow_keyboard_interrupt)
-
-    # Windows
-    elif platform.OS == platform.Os.WINDOWS: 
+    
+    elif os.name == "nt": 
         from cli_detroix23.inputs import windows
 
         key = windows.get_key(allow_keyboard_interrupt=allow_keyboard_interrupt)
-    
-    # Failed to find os.
+
     else:
-        raise OSError(f"(X) - Keys.get_key: Unrecognized OS ({platform.OS}).")
+        raise OSError(f"Keys.get_key: Unrecognized OS ({platform.OS}).")
 
     debug.debug_print(f"inputs.fetch.get() Key: {key}")
 

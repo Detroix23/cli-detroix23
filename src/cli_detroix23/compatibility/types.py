@@ -1,6 +1,8 @@
 """
-# CLI - Compatibility
+# CLI - Compatibility.
 src/cli_detroix23/compatibility/types.py
+
+_This file runs on every OS._
 """
 
 from typing import Union

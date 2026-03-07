@@ -1,6 +1,6 @@
 """
-CLI - Test
-debug.py
+# CLI.
+src/cli_detroix23/compatibility/debug.py
 """
 import sys
 from typing import Optional

@@ -6,7 +6,6 @@ Box-drawing characters.
 For more: https://en.wikipedia.org/wiki/Box-drawing_characters
 """
 
-
 class CharactersList:
     BOX_DRAWING = """
 U+250x  ─ 	━ 	│ 	┃ 	┄ 	┅ 	┆ 	┇ 	┈ 	┉ 	┊ 	┋ 	┌ 	┍ 	┎ 	┏

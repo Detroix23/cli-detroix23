@@ -1,5 +1,5 @@
 """
-CLI - Shapes
+# CLI - Shapes.
 src/cli_detroix23/shapes/examples.py
 """
 from cli_detroix23.maths import maths

@@ -1,8 +1,11 @@
 """
-CLI - Shapes
-base.py
+# CLI - Shapes.
+src/cli_detroix23/shapes/base.py
+
 Draw basic shapes. Uses the screen script.
 """
+
+from cli_detroix23.compatibility import defaults
 from cli_detroix23.maths import maths
 from cli_detroix23.animations import screen
 
@@ -17,16 +20,18 @@ class DrawError(Exception):
         super().__init__(message)
 
     def __repr__(self) -> str:
-        return f"(X) - DrawError: {self.message}."
+        return f"{defaults.LOG_ERROR}DrawError: {self.message}."
         
     def __str__(self) -> str:
-        return f"(X) - DrawError: {self.message}."
+        return f"{defaults.LOG_ERROR}DrawError: {self.message}."
 
 
 class Shape:
     """
     Define the base of any shape.
-    Has position, unique id. 
+    Has:
+    - `position`: `Vector2D`;
+    - `id`: `int`, must be unique; 
     """
     position: maths.Vector2D
     id: int
@@ -116,7 +121,7 @@ class RectangleHollow(Shape):
         show_center: bool = False,
     ) -> None:
         if border_size < 0:
-            raise ValueError(f"(X) - The border size must be 0 (filled) or more ({border_size}).")
+            raise ValueError(f"The border size must be 0 (filled) or more ({border_size}).")
 
         super().__init__(support, position, size, fill, show_center)
         self.border_size: int = border_size
@@ -218,7 +223,5 @@ def squarify_table(table: maths.Table2D, fill: str = "") -> None:
 
     return
 
-
 if __name__ == "__main__":
-    print("# Shapes")
     print("See `examples.py`.")

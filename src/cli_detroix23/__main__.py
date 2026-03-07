@@ -5,7 +5,10 @@ src/cli_detroix23/__main__.py
 
 Main script to test, and show examples of the library.
 """
-from cli_detroix23.compatibility import platform, debug
+
+import os
+
+from cli_detroix23.compatibility import platform, defaults, debug
 from cli_detroix23 import base, inputs, shapes, animations
 from cli_detroix23.base import style, models
 from cli_detroix23.animations import loadings
@@ -24,7 +27,7 @@ def main() -> None:
     debug.debug_print(f"__main__.main() Args: {settings.args}")
 
     # OS-wise configuration.
-    if platform.OS == platform.Os.UNIX:
+    if os.name == "posix":
         from cli_detroix23.compatibility import unix
 
         debug.debug_print("__main__.main() Running on UNIX.")
@@ -34,7 +37,7 @@ def main() -> None:
         debug.debug_print("__main__.main() Running on WINDOWS.")
 
     if debug.ENABLE_DEBUG:
-        debug.debug_print(f"__main__.main() Debug enabled.")
+        debug.debug_print("__main__.main() Debug enabled.")
 
     # Selection loop.
     settings.user_in = True
@@ -90,22 +93,22 @@ def main() -> None:
                 inputs.examples.run_sys_reading()
 
             elif settings.choice == "Quit":
-                style.printc("Quitting.", style=style.Color.YELLOW)
+                style.printc(f"{defaults.LOG_INFO}Quitting (from menu).", style=style.Color.YELLOW)
                 settings.user_in = False
 
             else:
-                style.printc("Quitting (Not a valid choice).", style=style.Color.YELLOW)
+                style.printc(f"{defaults.LOG_INFO}Quitting (somehow, not a valid choice).", style=style.Color.YELLOW)
                 settings.user_in = False
 
     except KeyboardInterrupt:
         settings.user_in = False
-        style.printc("Quitting (Ctrl+C).", style=style.Color.YELLOW)
+        style.printc(f"{defaults.LOG_INFO}Quitting (Ctrl+C).", style=style.Color.YELLOW)
 
     finally:
-        if platform.OS == platform.Os.UNIX:
+        if os.name == "posix":
             from cli_detroix23.compatibility import unix
 
-            debug.debug_print("(?) __main__.main End of CLI: reset settings.")
+            debug.debug_print(f"{defaults.LOG_INFO} __main__.main End of CLI: reset settings.")
             unix.set_to_default()
 
         print()

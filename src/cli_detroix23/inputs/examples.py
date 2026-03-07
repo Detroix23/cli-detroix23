@@ -2,6 +2,7 @@
 # CLI - Inputs
 src/cli_detroix23/inputs/examples.py
 """
+
 import sys
 
 from cli_detroix23.base import specials, controls

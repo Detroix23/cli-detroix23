@@ -1,6 +1,7 @@
 """
-CLI - Terminal
-screen.py
+# CLI.
+src/cli_detroix23/animations/screen.py
+
 Multi-line updating terminal display.
 """
 
@@ -11,16 +12,18 @@ import threading
 from typing import Callable, Union, Optional, Final
 from enum import Enum
 
-from cli_detroix23.compatibility import platform, debug
+from cli_detroix23.compatibility import defaults, debug
 from cli_detroix23.maths import maths
 from cli_detroix23.base import style, controls
 from cli_detroix23.inputs import keys, fetch
+
 
 class ReadingWay(Enum):
     LEFT_RIGHT = 0
     RIGHT_LEFT = 1
     UP_DOWN = 2
     DOWN_UP = 3
+
 
 class Screen:
     """
@@ -188,7 +191,7 @@ class Screen:
             while self.running:
                 # Keyboard interrupt.
                 if self._key_information.current == keys.Keys.INTERRUPT:
-                    raise KeyboardInterrupt(f"(X) - KeyboardInterrupt. Felt from `Screen.run`.")
+                    raise KeyboardInterrupt(f"KeyboardInterrupt. Felt from `Screen.run`.")
             
         except KeyboardInterrupt:
             self.running = False
@@ -196,7 +199,7 @@ class Screen:
 
             sys.stdout.write("\033[H\033[2J")
             sys.stdout.flush()
-            style.printc("(!) - Keyboard interrupt. Felt from `Screen.run`.", style.Color.YELLOW)
+            style.printc(f"{defaults.LOG_INFO}Keyboard interrupt. Felt from `Screen.run`.", style.Color.YELLOW)
 
         finally:
             self.running = False
@@ -204,7 +207,7 @@ class Screen:
 
             self.join_threads()
 
-            if platform.OS == platform.Os.UNIX:
+            if os.name == "posix":
                 from cli_detroix23.compatibility import unix
                 
                 debug.debug_print("Screen.run - End: reset CL settings.")
@@ -249,7 +252,7 @@ class Screen:
         try:
             self.char_table[int(position.y)][int(position.x)] = ' '
         except IndexError:
-            style.printc(f"(!) - Couldn't erase character at {position}: doesn't exist.", style.Color.YELLOW)
+            style.printc(f"{defaults.LOG_WARNING}Couldn't erase character at {position}: doesn't exist.", style.Color.YELLOW)
 
     def _write_char(self, char: str, position: maths.Vector2D, styles: str = "") -> None:
         """
@@ -261,14 +264,14 @@ class Screen:
         allow_negative_index: bool = False
 
         if len(char) > 1 and raise_on_long_char:
-            raise ValueError(f"{style.Color.RED}(X) - Must be a char: {char}, ({len(char)}).{style.Style.END}")
+            raise ValueError(f"{style.Color.RED}Must be a char: {char}, ({len(char)}).{style.Style.END}")
         if not char:
             # Don't do anything is the char is the empty string.
             # To erase, use `clear_char`.
             return
         if (position.x < 0 or position.y < 0) and not allow_negative_index:
             if warn_on_outside:
-                style.printc(f"(!) - Character {char} ignored at negative position: {position}.", style.Color.YELLOW)
+                style.printc(f"{defaults.LOG_WARNING}Character {char} ignored at negative position: {position}.", style.Color.YELLOW)
             return
 
         try:
@@ -278,7 +281,7 @@ class Screen:
                 self.char_table[int(position.y)][int(position.x)] = char
         except IndexError:
             if warn_on_outside:
-                style.printc(f"(!) - Character {char} ignored at {position}.", style.Color.YELLOW)
+                style.printc(f"{defaults.LOG_WARNING}Character {char} ignored at {position}.", style.Color.YELLOW)
 
     def write(self, message: Union[str, list[str]], start: maths.Vector2D, way: ReadingWay = ReadingWay.LEFT_RIGHT, styles: str = "") -> int:
         """
@@ -303,7 +306,7 @@ class Screen:
             elif way == ReadingWay.UP_DOWN:
                 shift = maths.Vector2D(0, 1)
             else:
-                raise ValueError(f"{style.Color.RED}(X) - Must be a valid direction (0 - 3): {way}.{style.Style.END}")
+                raise ValueError(f"{style.Color.RED}Must be a valid direction (0 - 3): {way}.{style.Style.END}")
 
             if isinstance(message, str):
                 for index, letter in enumerate(message):
@@ -338,9 +341,7 @@ class Screen:
         for row in table:
             self.write(row, cursor_position, way, styles)
             cursor_position.y -= 1
-        
-
-
+    
     def print_char_table(self) -> None:
         """
         When all chars are written, print the table that covers the whole screen.

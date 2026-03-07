@@ -1,12 +1,14 @@
 """
 # CLI.
-models.py
-Easy formatting with pre-made templates.
-Prefixes:
+src/cli_detroix23/base/models.py
+
+Easy formatting with pre-made templates. Prefixes:
 - "$" select;  
 - "#" string input;  
 - "?" boolean input;  
 
+Inspirations:
+- `gh` GitHub command line client.
 """
 
 from cli_detroix23.base import style

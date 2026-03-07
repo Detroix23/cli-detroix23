@@ -1,7 +1,12 @@
 """
-CLI - Terminal
-style.py
+# CLI - Base.
+src/cli_detroix23/base/style.py
+
+Reference for ANSI character codes and styles.
+
+_This file is supposed to be neutral, with only Python dependencies_
 """
+
 import os
 
 ESC: str = "\x1b"
@@ -11,6 +16,7 @@ Possibles codes:
 - `\\033`;
 - `\\x1b`;
 - `\\e` (Windows);
+- `\\e0` (Windows);
 """
 
 # Shortcuts
@@ -25,9 +31,9 @@ class Style:
     """
     Color codes for the terminal, reference for the Select Graphic Rendition subset. 
 
-    More info:  
-        - https://stackoverflow.com/questions/4842424/list-of-ansi-color-escape-sequences.  
-        - https://en.wikipedia.org/wiki/ANSI_escape_code
+    More info:
+    - https://stackoverflow.com/questions/4842424/list-of-ansi-color-escape-sequences.
+    - https://en.wikipedia.org/wiki/ANSI_escape_code
     """
     END: str = ESC + '[0m'
     DEFAULT: str = ESC + '[10m'
@@ -55,6 +61,7 @@ class Style:
                 print(f"(\033[{i}m{text}{Style.END})", end="")
         print()
 
+
 class Text(Style):
     """
     Text weight and style.
@@ -67,6 +74,7 @@ class Text(Style):
     INVISIBLE: str = ESC + '[8m'
     THROUGHT: str = ESC + '[9m'
     DOUBLE_UNDERLINE: str = ESC + '[21m'
+
 
 class Color(Style):
     """

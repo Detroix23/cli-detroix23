@@ -1,6 +1,6 @@
 """
-Terminal - MATHS
-transformations.py
+# CLI - Maths.
+src/cli_detroix23/maths/transformations.py
 """
 
 from cli_detroix23.compatibility import types
@@ -30,7 +30,7 @@ def simple_cos(a: int) -> int:
     }
     a %= 360
     if a not in map.keys():
-        raise ValueError(f"(X) - Simple cosine accept only simple values. {a} not in ({map}).")
+        raise ValueError(f"Simple cosine accept only simple values. {a} not in ({map}).")
     
     return map[a]
 
@@ -46,7 +46,7 @@ def simple_sin(a: int) -> int:
     }
     a %= 360
     if a not in map.keys():
-        raise ValueError(f"(X) - Simple sine accept only simple values. {a} not in ({map}).")
+        raise ValueError(f"Simple sine accept only simple values. {a} not in ({map}).")
     
     return map[a]
 
@@ -86,11 +86,11 @@ def rotation(table: types.Table2D, angle: int) -> types.Table2D:
             print(f"Char: {char}.")
             try:
                 if raise_negative and (y_index < 0 or x_index < 0):
-                    raise IndexError('(X) - Trans.Rotation: neg.')
+                    raise IndexError("Trans.Rotation: neg.")
                 new_table[y_index][x_index]
 
             except IndexError:
-                raise IndexError(f"""(X) - Trans.Rotation:                     
+                raise IndexError(f"""Trans.Rotation:                     
 a={angle} char='{char}' 
 x={x}, y={y} 
 x'={x_prime}, y'={y_prime}
@@ -132,7 +132,7 @@ def simple_rotation(table: types.Table2D, angle: int) -> types.Table2D:
     Perform a rotation of simple degree angle.
     """
     if angle % 90 != 0:
-        raise ValueError(f"(X) - Simple rotation accepts only simple angles (dividable by 90). Given {angle}.")
+        raise ValueError(f"Simple rotation accepts only simple angles (dividable by 90). Given {angle}.")
     
     angle %= 360
     if angle == 0:

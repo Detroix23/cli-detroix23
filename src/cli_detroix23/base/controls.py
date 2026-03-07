@@ -1,13 +1,13 @@
 """
-CLI - Base
-controls.py
-cf:
-    https://en.wikipedia.org/wiki/ANSI_escape_code
+# CLI - Base.
+src/cli_detroix23/base/controls.py  
+
+See https://en.wikipedia.org/wiki/ANSI_escape_code.
 """
 import sys
 
-import base.specials as specials
-import maths.maths as maths
+from cli_detroix23.base import specials  
+from cli_detroix23.maths import maths
 
 def up(times: int = 1, flush: bool = False) -> None:
     """

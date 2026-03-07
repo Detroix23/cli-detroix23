@@ -1,8 +1,10 @@
 """
-CLI - Style/ Base
-specials.py
+# CLI - Base.
+src/cli_detroix23/base/specials.py
+
 Special escape characters.
 """
+
 from typing import Final
 
 _POSSIBLE_ESC: Final[set[str]] = {"\033", "\x1b"}

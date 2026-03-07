@@ -1,6 +1,6 @@
 """
 # CLI.
-formatting.py
+src/cli_detroix23/base/formatting.py
 """
 
 from typing import Iterable

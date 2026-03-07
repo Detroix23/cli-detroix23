@@ -1,7 +1,8 @@
 """
-CLI - Inputs
-arguments.py
+# CLI - Inputs.
+src/cli_detroix23/inputs/arguments.py
 """
+
 import sys
 import dataclasses
 
@@ -24,9 +25,3 @@ class Settings:
         for arg in self.args:
             if arg in {"-d", "--debug"}:
                 self.enable_debug = True
-
-
-
-
-
-

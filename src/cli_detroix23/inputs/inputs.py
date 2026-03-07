@@ -1,6 +1,6 @@
 """
-# CLI - Inputs
-/src/cli_detroix23/inputs/inputs.py
+# CLI - Inputs.
+src/cli_detroix23/inputs/inputs.py
 """
 
 import os
@@ -94,7 +94,8 @@ def input(
         i += 1
 
     if not valid or true_response is None:
-        raise ValueError(f"(X) - Can't return an invalid response.")
+        raise ValueError(f"Can't return an invalid response.")
+    
     print(f"R: `{true_response}`")
     return true_response
 
@@ -132,7 +133,8 @@ def boolean_input(
         i += 1
 
     if not valid or true_response is None:
-        raise ValueError(f"(X) - Can't return an invalid response.")
+        raise ValueError(f"Can't return an invalid response.")
+    
     print(f"R: `{true_response}`")
     return true_response
 

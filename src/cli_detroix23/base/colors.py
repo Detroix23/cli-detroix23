@@ -1,6 +1,6 @@
 """
-CLI - Base
-colors.py
+# CLI - Base.
+src/cli_detroix23/base/colors.py
 """
 
 def color_table() -> None:

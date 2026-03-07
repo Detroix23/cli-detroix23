@@ -8,9 +8,10 @@ from typing import Final
 from cli_detroix23.base import style
 
 LOG_DEBUG: Final[str] = " (D) "
-LOG_INFO: Final[str] = "(?)"
-LOG_WARNING: Final[str] = "(!)"
-LOG_ERROR: Final[str] = "(X)"
+LOG_INFO: Final[str] = " (?) "
+LOG_WARNING: Final[str] = " (!) "
+LOG_ERROR: Final[str] = " (X) "
+""" Error message header. Do not use it in exceptions. """
 
 LOG_DEBUG_COLOR: str = style.Color.CYAN
 

@@ -1,6 +1,6 @@
 """
-CLI - Base / Style.
-exemples.py
+# CLI - Base.
+src/cli_detroix23/base/examples.py
 """
 from cli_detroix23.base import style, code
 

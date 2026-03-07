@@ -1,8 +1,9 @@
 """
-IN PICTURE
-loadings.py
-Aim: loading bars and spinners like `alive_progress`, `tqdm`,...
-Utilize the \r escape operator
+# CLI.
+src/cli_detroix23/animations/loadings.py
+
+Scope: loading bars and spinners like `alive_progress`, `tqdm`,...  
+Utilize the \r escape operator.
 """
 
 import time
@@ -145,7 +146,7 @@ class Bar(Animation):
     
     def finish(self) -> None:
         """
-        Allow to prematurly and ensure the bar to complete.
+        Allow to prematurely and ensure the bar to complete.
         Fill the bar on call.
         """
         if self._i < self.max:
@@ -272,7 +273,7 @@ class Spinner(Animation):
 
     def finish(self) -> None:
         """
-        Allow to prematurly and ensure the spinner to complete.
+        Allow to prematurely and ensure the spinner to complete.
         Set the state to FINISHED, and update one last time.
         """
         if self._i < self.max:
