@@ -4,7 +4,7 @@ code.py
 """
 from typing import Union
 
-import base.style as base
+from cli_detroix23.base import style
 
 class Code:
     """
@@ -29,7 +29,7 @@ class Code:
     
     def __repr__(self) -> str:
         """
-        Print debug informations, with no formatting.
+        Print debug information, with no formatting.
         """
         return f"Code(string: str = {repr(self.string)}, codes: list[int] = {self.codes})"
     
@@ -54,7 +54,7 @@ def code_clean(string: str) -> int:
     """
     Return a string cleansed of its first escape character.
     """
-    impure: set[str] = {base.ESC, "[", "m"}
+    impure: set[str] = {style.ESC, "[", "m"}
     cleaned: str = ""
 
     for char in string:    
@@ -70,7 +70,7 @@ def code_clean_all(string: str) -> list[int]:
     """
     clean: list[int] = list()
     if string:
-        splitted: list[str] = string.split(base.ESC)
+        splitted: list[str] = string.split(style.ESC)
         if not splitted[0]:
             splitted.pop(0)
         clean = [code_clean(string) for string in splitted]
@@ -81,7 +81,7 @@ def code_fuse(codes: list[int]) -> str:
     """
     Merges together codes into a multi-style character.
     """
-    string: str = base.ESC + "["
+    string: str = style.ESC + "["
     for index, code in enumerate(codes):
         string += str(code)
         if index < len(codes) - 1:

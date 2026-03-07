@@ -6,10 +6,10 @@ Special escape characters.
 from typing import Final
 
 _POSSIBLE_ESC: Final[set[str]] = {"\033", "\x1b"}
+ESC_BYTES: Final[bytes] = b"\x1b"
 ESC: Final[str] = "\x1b"
-"""
-General escape character.
-"""
+""" General escape character. """
+
 MSVCRT_GETCH_SPECIALS: Final[set[int]] = {b"\000"[0], b"\xe0"[0]}
 WINDOWS: Final[bytes] = b"\xe0"
 
@@ -47,7 +47,7 @@ NICE_MAP: Final[dict[str, str]] = {
 
 def filter_map(map: dict[str, str], string: str) -> list[str]:
     """
-    Return a list of str with the corresping string of the given map, if existant.
+    Return a list of str with the corresponding string of the given map, if exists.
     Else, puts the character itself.
     """
     result: list[str] = list()
@@ -63,4 +63,3 @@ def filter_map(map: dict[str, str], string: str) -> list[str]:
         result = [string]
 
     return result
-

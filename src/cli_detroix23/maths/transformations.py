@@ -3,17 +3,18 @@ Terminal - MATHS
 transformations.py
 """
 
-import maths.maths as base
+from cli_detroix23.compatibility import types
+from cli_detroix23.maths import maths
 
-RELATIVE_NEIGHBOURS: set[base.Vector2D] = {
-    base.Vector2D(1, 0),
-    base.Vector2D(1, 1),
-    base.Vector2D(0, 1),
-    base.Vector2D(-1, 1),
-    base.Vector2D(-1, 0),
-    base.Vector2D(-1, -1),
-    base.Vector2D(0, -1),
-    base.Vector2D(1, -1),
+RELATIVE_NEIGHBOURS: set[maths.Vector2D] = {
+    maths.Vector2D(1, 0),
+    maths.Vector2D(1, 1),
+    maths.Vector2D(0, 1),
+    maths.Vector2D(-1, 1),
+    maths.Vector2D(-1, 0),
+    maths.Vector2D(-1, -1),
+    maths.Vector2D(0, -1),
+    maths.Vector2D(1, -1),
 }
 
 
@@ -50,7 +51,7 @@ def simple_sin(a: int) -> int:
     return map[a]
 
 
-def rotation(table: base.table2D, angle: int) -> base.table2D:
+def rotation(table: types.Table2D, angle: int) -> types.Table2D:
     """
     Rotate a table, with simple degree angles, using:
     x' = x * cos(angle) - y * sin(angle)
@@ -67,12 +68,12 @@ def rotation(table: base.table2D, angle: int) -> base.table2D:
             x_max_original = len(row)
     y_max_original: int = len(table)
 
-    size_max: base.Size = base.Size(
+    size_max: maths.Size = maths.Size(
         abs(x_max_original * simple_cos(angle) - y_max_original * simple_sin(angle)),
         abs(x_max_original * simple_sin(angle) + y_max_original * simple_cos(angle)),
     )
 
-    new_table: base.table2D = base.create_table(size_max, character="_")
+    new_table: types.Table2D = maths.create_table(size_max, character="_")
 
     # Rotate.
     for y, row in enumerate(table):
@@ -103,7 +104,7 @@ New: {new_table}
     return new_table
 
 
-def transpose(table: base.table2D) -> base.table2D:
+def transpose(table: types.Table2D) -> types.Table2D:
     """
     Return a transposed list of list <=> -90 degrees rotation + mirroring. \n
     ```
@@ -114,11 +115,11 @@ def transpose(table: base.table2D) -> base.table2D:
     """
     return [list(t) for t in list(zip(*table))]
 
-def mirror(table: base.table2D) -> base.table2D:
+def mirror(table: types.Table2D) -> types.Table2D:
     """
     Mirror the sub-lists.
     """
-    new: base.table2D = list()
+    new: types.Table2D = list()
     for row in table:
         for i in range(len(row) // 2):
             row[i], row[len(row) - i - 1] = row[len(row) - i - 1], row[i]
@@ -126,7 +127,7 @@ def mirror(table: base.table2D) -> base.table2D:
     
     return new
 
-def simple_rotation(table: base.table2D, angle: int) -> base.table2D:
+def simple_rotation(table: types.Table2D, angle: int) -> types.Table2D:
     """
     Perform a rotation of simple degree angle.
     """

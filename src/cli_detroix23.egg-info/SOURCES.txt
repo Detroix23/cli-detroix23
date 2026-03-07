@@ -22,7 +22,7 @@ src/cli_detroix23/base/models.py
 src/cli_detroix23/base/specials.py
 src/cli_detroix23/base/style.py
 src/cli_detroix23/compatibility/__init__.py
-src/cli_detroix23/compatibility/plateform.py
+src/cli_detroix23/compatibility/platform.py
 src/cli_detroix23/compatibility/types.py
 src/cli_detroix23/compatibility/unix.py
 src/cli_detroix23/inputs/__init__.py

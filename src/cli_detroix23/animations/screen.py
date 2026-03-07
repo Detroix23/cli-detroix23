@@ -11,13 +11,11 @@ import threading
 from typing import Callable, Union, Optional, Final
 from enum import Enum
 
-from cli_detroix23.compatibility import plateform
-import test.debug
-import maths.maths as maths
-import base.style as style
-import base.controls as controls
-import inputs.keys
-import inputs.fetch
+from cli_detroix23.compatibility import platform
+from cli_detroix23 import test
+from cli_detroix23.maths import maths
+from cli_detroix23.base import style, controls
+from cli_detroix23.inputs import keys, fetch
 
 class ReadingWay(Enum):
     LEFT_RIGHT = 0
@@ -28,7 +26,7 @@ class ReadingWay(Enum):
 class Screen:
     """
     # Define a whole CLI application.
-    See `./animations/exemples.py` for exemple applications. \r
+    See `./animations/examples.py` for example applications. \r
     Main method: `run`, taking an `updater` and a `drawer`. \r
     """
     running: bool
@@ -44,7 +42,7 @@ class Screen:
     char_table: list[list[str]]
     previous_char_table: list[list[str]]
     read_keys: bool
-    _key_informations: inputs.keys.Info
+    _key_information: keys.Info
     threads: dict[str, threading.Thread]
 
     def __init__(
@@ -69,7 +67,7 @@ class Screen:
         self.char_table = self.blank_char_table()
         self.previous_char_table = self.blank_char_table()
         self.read_keys = read_keys
-        self._key_informations = inputs.keys.Info()
+        self._key_information = keys.Info()
         self.threads = dict()
 
     def start_threads(self) -> int:
@@ -86,8 +84,8 @@ class Screen:
         if ENABLE["keys"]:
             test.debug.debug_print("Created thread: `keys`.")
             self.threads["keys"] = threading.Thread(
-                target=inputs.fetch.fetch_target,
-                args=(self._key_informations,),
+                target=fetch.fetch_target,
+                args=(self._key_information,),
             )
             
         if ENABLE["loop"]:
@@ -181,7 +179,7 @@ class Screen:
         self.drawer = drawer
         self._frames: int = 0
         self.running = True
-        self._key_informations.running = True
+        self._key_information.running = True
 
         self.start_threads()
 
@@ -190,12 +188,12 @@ class Screen:
             test.debug.debug_print("Started main loop.")
             while self.running:
                 # Keyboard interrupt.
-                if self._key_informations.current == inputs.keys.Keys.INTERRUPT:
+                if self._key_information.current == keys.Keys.INTERRUPT:
                     raise KeyboardInterrupt(f"(X) - KeyboardInterrupt. Felt from `Screen.run`.")
             
         except KeyboardInterrupt:
             self.running = False
-            self._key_informations.running = False
+            self._key_information.running = False
 
             sys.stdout.write("\033[H\033[2J")
             sys.stdout.flush()
@@ -203,15 +201,15 @@ class Screen:
 
         finally:
             self.running = False
-            self._key_informations.running = False
+            self._key_information.running = False
 
             self.join_threads()
 
-            if plateform.OS == plateform.Os.UNIX:
-                import compatibility.unix
+            if platform.OS == platform.Os.UNIX:
+                from cli_detroix23.compatibility import unix
                 
                 test.debug.debug_print("Screen.run - End: reset CL settings.")
-                compatibility.unix.set_to_default()
+                unix.set_to_default()
 
             sys.stdout.flush()
 
@@ -227,11 +225,11 @@ class Screen:
         return self._frames
 
     @property
-    def pressed_key(self) -> Optional[inputs.keys.Key]:
+    def pressed_key(self) -> Optional[keys.Key]:
         """
         Get the value of `_current_key`. Read-only.
         """
-        return self._key_informations.current
+        return self._key_information.current
 
     def frames_reset(self) -> None:
         """

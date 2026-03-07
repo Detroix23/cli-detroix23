@@ -1,11 +1,10 @@
 """
-CLI - Terminal
-boxes.py
-Box-drawing characters
+# CLI.
+src/cli_detroix23/base/boxes.py
+
+Box-drawing characters.   
+For more: https://en.wikipedia.org/wiki/Box-drawing_characters
 """
-
-# For more: https://en.wikipedia.org/wiki/Box-drawing_characters
-
 
 
 class CharactersList:
@@ -65,7 +64,7 @@ U+1FBEx 	🯠 	🯡 	🯢 	🯣 	🯤 	🯥 	🯦 	🯧 	🯨 	🯩 	🯪 	🯫 
 U+1FBFx 	🯰 	🯱 	🯲 	🯳 	🯴 	🯵 	🯶 	🯷 	🯸 	🯹 	🯺 					
 """
 
-class Exemples:
+class Examples:
     Window1: str = """
 ┌─┬┐  ╔═╦╗  ╓─╥╖  ╒═╤╕
 │ ││  ║ ║║  ║ ║║  │ ││

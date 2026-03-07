@@ -1,11 +1,13 @@
 """
-CLI - Inputs
-inputs.py
+# CLI - Inputs
+/src/cli_detroix23/inputs/inputs.py
 """
 
 import os
 import pathlib as path
-from typing import Union, Optional
+from typing import Optional
+
+from cli_detroix23.compatibility import defaults, types
 
 symbol_mode: dict[str, list[str]] = {
         "1": ["1", "en", "encode", "enc"],
@@ -37,20 +39,20 @@ def list_directory(directory: path.Path) -> None:
 
 def input(
     message: str,
-    symbols: Union[dict[str, list[str]], list[str], None] = None,
+    symbols: types.InputSymbols = None,
     default: Optional[int] = None,
     must_validate: bool = True,
     allowed_type: type = str,
-    error_message: str = "(!) - Incorrect input. Please try again.",
+    error_message: str = defaults.USER_INCORRECT_INPUT,
     max_iterations: int = 10000,
 ) -> str:
     """
-    A genral use input sanitaizer that repeats until the user has entered a correct value.
-    `Symbols` define the allowed keywords that the user can type. 
+    A general use input sanitizer that repeats until the user has entered a correct value.
+    `symbols` define the allowed keywords that the user can type. 
         - None (default): no restriction
         - list[str]: Only one keyword for each symbol, itself
         - dict[str, list[str]]: Each symbol can have multiple keywords.
-    `Allowed` contains as keys the true machine return symbol and as value the list of all string that corrispond to that key.
+    `Allowed` contains as keys the true machine return symbol and as value the list of all string that correspond to that key.
     If none, all responses are correct.
     `Default` is the index of the default key of the allowed list.
     """
@@ -99,19 +101,19 @@ def input(
 def boolean_input(
     message: str,
     default: bool = True, 
-    error_message: str = "(!) - Incorrect input. Please try again.",
+    error_message: str = defaults.USER_INCORRECT_INPUT,
     max_iterations: int = 10000,
 ) -> bool:
     """
-    A boolean (yes/ no) input sanitaizer that repeats until the user has entered a correct value.
+    A boolean (`yes` | `no`) input sanitizer that repeats until the user has entered a correct value.
     `Default` is the value returned in case the user just presses Enter.
     """
     valid: bool = False
     true_response: Optional[bool] = None 
     i: int = 0
     symbols: dict[bool, list[str]] = {
-        False: ["No", "NO", "no", "n", "N"],
-        True: ["Yes", "YES", "yes", "ye", "y", "Y"]
+        True: defaults.INPUTS_YES,
+        False: defaults.INPUTS_NO,
     }
 
     while not valid and i < max_iterations:

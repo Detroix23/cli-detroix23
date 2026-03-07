@@ -6,9 +6,9 @@ Basic maths stuff.
 import os
 import math
 
-import compatibility.types as types
+from cli_detroix23.compatibility import types
 
-table2D = types.table2D
+Table2D = types.Table2D
 
 class Size:
     """
@@ -32,7 +32,7 @@ class Size:
 
     def __hash__(self) -> int:
         """
-        Hash dunder method. Allow use in `set`,...
+        Hash private method override. Allow use in `set` and `dict`.
         """
         return hash((self.x, self.y))
 
@@ -75,20 +75,22 @@ class Vector2D:
     def __str__(self) -> str:
         return f"x: {self.x}, y: {self.y} "
 
+    def __eq__(self, target: object) -> bool:
+        if isinstance(target, Vector2D):
+            return self.x == target.x and self.y == target.y
+        else:
+            return NotImplemented
+
+    def __hash__(self) -> int:
+        return hash((self.x, self.y))
+
     def clone(self) -> 'Vector2D':
         return Vector2D(
             self.x,
             self.y
         )
 
-    def __eq__(self, target: object) -> bool:
-        if isinstance(target, Vector2D):
-            return self.x == target.x and self.y == target.y
-        else:
-            return False
-
-    def __hash__(self) -> int:
-        return hash((self.x, self.y))
+    
 
 
 def both_range(number: int) -> list[int]:
@@ -104,13 +106,13 @@ def middle_range(number: int) -> list[int]:
     return [i - number // 2 for i in range(number)]
 
 
-def create_table(size: Size, character: str = "") -> table2D:
+def create_table(size: Size, character: str = "") -> Table2D:
     """
     Return a 2D table; by default, full of empty strings.
     """
     return [[character for _ in range(size.x)] for _ in range(size.y)]
 
-def create_table_like(model: table2D, character: str = "") -> table2D:
+def create_table_like(model: Table2D, character: str = "") -> Table2D:
     """
     Return a 2D table that can contain the model; by default, full of empty strings.
     """

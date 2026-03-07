@@ -5,33 +5,40 @@ src/cli_detroix23/__main__.py
 
 Main script to test, and show examples of the library.
 """
-from cli_detroix23.compatibility import plateform
-from cli_detroix23 import test
-from cli_detroix23 import base
+from cli_detroix23.compatibility import platform
+from cli_detroix23 import test, base, inputs, shapes, animations
 from cli_detroix23.base import style, models
-from cli_detroix23 import animations
 from cli_detroix23.animations import loadings
-from cli_detroix23 import inputs
 from cli_detroix23.inputs import select_menu
-from cli_detroix23 import shapes
 
 def main() -> None:
     print("# CLI module for Python, by Detroix23.")
-    if plateform.OS == plateform.Os.UNIX:
-        from cli_detroix23.compatibility import unix
 
-        print(f"Running on UNIX.")
-        unix.print_attr(unix.SETTINGS)
-    
-
+    # Settings and arguments.
     settings: inputs.start.Settings = inputs.start.Settings()
 
     settings.read_arguments()
     if settings.enable_debug:
         test.debug.ENABLE_DEBUG = True
-    test.debug.debug_print(f"Args: {settings.args}")
+    
+    test.debug.debug_print(f"__main__.main() Args: {settings.args}")
 
+    # OS-wise configuration.
+    if platform.OS == platform.Os.UNIX:
+        from cli_detroix23.compatibility import unix
+
+        test.debug.debug_print("__main__.main() Running on UNIX.")
+        unix.print_attr(unix.SETTINGS)
+    
+    elif platform.OS == platform.Os.WINDOWS:
+        test.debug.debug_print("__main__.main() Running on WINDOWS.")
+
+    if test.debug.ENABLE_DEBUG:
+        test.debug.debug_print(f"__main__.main() Debug enabled.")
+
+    # Selection loop.
     settings.user_in = True
+
     try:
         while settings.user_in:
             main_select: select_menu.SelectMenu = select_menu.SelectMenu(
@@ -53,10 +60,10 @@ def main() -> None:
             print()
 
             if settings.choice == "Animations.Matrix":
-                animations.exemples.run_matrix()
+                animations.examples.run_matrix()
 
             elif settings.choice == "Animations.GameOfLife":
-                animations.exemples.run_game_of_life()
+                animations.examples.run_game_of_life()
 
             elif settings.choice == "Base.Style":
                 base.exemples.main()
@@ -68,27 +75,26 @@ def main() -> None:
                 print(models.input_gh_style("What's your name ? I dont read it actually.", usage="asd", default="a"))
                 print(models.bool_gh_style("You sure ? But I dont care"))
                 print(models.select_gh_style("You know this one."))
-
                 print()
 
             elif settings.choice == "Shapes.Base":
-                shapes.exemples.run_exemple1()
+                shapes.examples.run_example1()
 
             elif settings.choice == "Base.Colors":
                 base.colors.main()
 
             elif settings.choice == "Inputs.Keys":
-                inputs.exemples.run_basic_keys()
+                inputs.examples.run_basic_keys()
 
             elif settings.choice == "Inputs.Stdin":
-                inputs.exemples.run_sys_reading()
+                inputs.examples.run_sys_reading()
 
             elif settings.choice == "Quit":
-                style.printc("Quiting.", style=style.Color.YELLOW)
+                style.printc("Quitting.", style=style.Color.YELLOW)
                 settings.user_in = False
 
             else:
-                style.printc("Quiting (Not a valid choice).", style=style.Color.YELLOW)
+                style.printc("Quitting (Not a valid choice).", style=style.Color.YELLOW)
                 settings.user_in = False
 
     except KeyboardInterrupt:
@@ -96,10 +102,10 @@ def main() -> None:
         style.printc("Quiting (Ctrl+C).", style=style.Color.YELLOW)
 
     finally:
-        if plateform.OS == plateform.Os.UNIX:
+        if platform.OS == platform.Os.UNIX:
             from cli_detroix23.compatibility import unix
 
-            test.debug.debug_print("__main__.main - End CLI reseted settings.")
+            test.debug.debug_print("(?) __main__.main End of CLI: reset settings.")
             unix.set_to_default()
 
         print()

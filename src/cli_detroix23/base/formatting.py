@@ -1,11 +1,11 @@
 """
-CLI - Terminal
-formating.py
+# CLI.
+formatting.py
 """
 
 from typing import Iterable
 
-import base.style as style
+from cli_detroix23.base import style
 
 def table(
     elements: Iterable[str], 

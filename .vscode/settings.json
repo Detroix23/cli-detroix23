@@ -8,7 +8,9 @@
     "python.analysis.inlayHints.variableTypes": true,
     "python.analysis.typeCheckingMode": "strict",
     "cSpell.words": [
-        "getch"
+        "getch",
+        "printc",
+        "squarify"
     ],
  
 }

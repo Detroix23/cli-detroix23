@@ -1,20 +1,19 @@
 """
-CLI - Animations
-exemples.py
+# CLI - Animations
+src/cli_detroix23/animations/examples.py
 """
 import time
 import random
 from enum import Enum
 from typing import Sequence
 
-import maths.maths as maths
-import maths.transformations as transformations
-import animations.screen as screen
-import base.style as style
+from cli_detroix23.maths import maths, transformations
+from cli_detroix23.base import style
+from cli_detroix23.animations import screen
 
-class Dropplet:
+class Droplet:
     """
-    Single dropplet for the Matrix's digital rain.
+    Single droplet for the Matrix's digital rain.
     """
     char: str
     position: maths.Vector2D
@@ -41,7 +40,7 @@ class Dropplet:
 
     def update(self) -> None:
         """
-        Update the dropplet. Apply gravity.
+        Update the droplet. Apply gravity.
         """
         # Move, if enough frames.
         if self.screen.frames % self.frames_to_move == 0:
@@ -56,7 +55,7 @@ class Dropplet:
 
     def full_tail(self) -> list[str]:
         """
-        Return the string list of all character (current and tail's) formated.
+        Return the string list of all character (current and tail's) formatted.
         """
         tail: list[str] = [f"{style.Text.BOLD}{self.char}{style.END}"]
         for index, char in enumerate(self.last_chars):
@@ -68,7 +67,7 @@ class Dropplet:
         return tail
 
 class Matrix(screen.Screen):
-    digital_rain: list[Dropplet]
+    digital_rain: list[Droplet]
     character_random_range: tuple[int, int]
     infos: bool
     start_time: float
@@ -86,7 +85,7 @@ class Matrix(screen.Screen):
             debug=False,
             deactivate_screen=False
         )
-        self.digital_rain: list[Dropplet] = list()
+        self.digital_rain: list[Droplet] = list()
         self.character_random_range: tuple[int, int] = character_random_range
         self.infos: bool = infos
         self.start_time: float = time.monotonic()
@@ -103,19 +102,19 @@ class Matrix(screen.Screen):
 
 
     def updater(self) -> None:
-        # New dropplet
-        dropplet_quantity: int = (self.size.x // (45 + int(1 / self.frame_delay) // 10))
-        if dropplet_quantity == 0:
-            dropplet_quantity = 1
-        for _ in range(dropplet_quantity):
-            self.digital_rain.append(Dropplet(self))
+        # New droplet
+        droplet_quantity: int = (self.size.x // (45 + int(1 / self.frame_delay) // 10))
+        if droplet_quantity == 0:
+            droplet_quantity = 1
+        for _ in range(droplet_quantity):
+            self.digital_rain.append(Droplet(self))
 
-        # Update each existing dropplet
-        new_rain: list[Dropplet] = list()
-        for dropplet in self.digital_rain:
-            dropplet.update()
-            if dropplet.position.y - len(dropplet.last_chars) <= self.size.y:
-                new_rain.append(dropplet)
+        # Update each existing droplet
+        new_rain: list[Droplet] = list()
+        for droplet in self.digital_rain:
+            droplet.update()
+            if droplet.position.y - len(droplet.last_chars) <= self.size.y:
+                new_rain.append(droplet)
         
         self.digital_rain = new_rain
 
@@ -128,9 +127,9 @@ class Matrix(screen.Screen):
 
     def drawer(self) -> None:
         cursor: int = 1
-        # Draw each existing dropplets.
-        for dropplet in self.digital_rain:
-            self.write(dropplet.full_tail(), dropplet.position, screen.ReadingWay.DOWN_UP)
+        # Draw each existing droplets.
+        for droplet in self.digital_rain:
+            self.write(droplet.full_tail(), droplet.position, screen.ReadingWay.DOWN_UP)
 
         # Infos.
         if self.infos:

@@ -4,9 +4,14 @@ style.py
 """
 import os
 
-# Escape character.
-_POSSIBLE_ESC: set[str] = {"\033", "\x1b"}
 ESC: str = "\x1b"
+"""
+Escape special characters that allows styles.  
+Possibles codes:
+- `\\033`;
+- `\\x1b`;
+- `\\e` (Windows);
+"""
 
 # Shortcuts
 END: str = ESC + '[0m'
@@ -15,12 +20,13 @@ OFF_BOLD: str = ESC + '[22m'
 OFF_ITALIC: str = ESC + '[23m'
 OFF_UNDERLINE: str = ESC + '[24m'
 
-# Reference
+
 class Style:
     """
-    Color codes for the terminal, from the Select Graphic Rendition subset.
-    More info: 
-        - https://stackoverflow.com/questions/4842424/list-of-ansi-color-escape-sequences.
+    Color codes for the terminal, reference for the Select Graphic Rendition subset. 
+
+    More info:  
+        - https://stackoverflow.com/questions/4842424/list-of-ansi-color-escape-sequences.  
         - https://en.wikipedia.org/wiki/ANSI_escape_code
     """
     END: str = ESC + '[0m'
@@ -53,14 +59,14 @@ class Text(Style):
     """
     Text weight and style.
     """
-    BOLD = ESC + '[1m'
-    ITALIC = ESC + '[3m'
-    UNDERLINE = ESC + '[4m'
-    BLINK = ESC + '[5m'
-    BLINK2 = ESC + '[6m'
-    INVISIBLE = ESC + '[8m'
-    THROUGHT = ESC + '[9m'
-    DOUBLE_UNDERLINE = ESC + '[21m'
+    BOLD: str = ESC + '[1m'
+    ITALIC: str = ESC + '[3m'
+    UNDERLINE: str = ESC + '[4m'
+    BLINK: str = ESC + '[5m'
+    BLINK2: str = ESC + '[6m'
+    INVISIBLE: str = ESC + '[8m'
+    THROUGHT: str = ESC + '[9m'
+    DOUBLE_UNDERLINE: str = ESC + '[21m'
 
 class Color(Style):
     """
@@ -68,47 +74,45 @@ class Color(Style):
     More info:
         - https://github.com/termstandard/colors
     """
-    DIM = ESC + '[2m'
-    DIMMER = ESC + '[37m'
-
-    BLACK = ESC + '[30m'
-    RED = ESC + '[31m'
-    GREEN = ESC + '[32m'
-    YELLOW = ESC + '[33m'
-    OKBLUE = ESC + '[34m'
-    MAGENTA = ESC + '[35m'
-    CYAN = ESC + '[36m'
-    LIGHT_RED = ESC + '[91m'
-    LIGHT_GREEN = ESC + '[92m'
-    LIGHT_YELLOW = ESC + '[93m'
-    LIGHT_OKBLUE = ESC + '[94m'
-    LIGHT_MAGENTA = ESC + '[95m'
-    LIGHT_CYAN = ESC + '[96m'
-    WHITE = ESC + '[97m'
+    DIM: str = ESC + '[2m'
+    DIMMER: str = ESC + '[37m'
+    BLACK: str = ESC + '[30m'
+    RED: str = ESC + '[31m'
+    GREEN: str = ESC + '[32m'
+    YELLOW: str = ESC + '[33m'
+    OKBLUE: str = ESC + '[34m'
+    MAGENTA: str = ESC + '[35m'
+    CYAN: str = ESC + '[36m'
+    LIGHT_RED: str = ESC + '[91m'
+    LIGHT_GREEN: str = ESC + '[92m'
+    LIGHT_YELLOW: str = ESC + '[93m'
+    LIGHT_OKBLUE: str = ESC + '[94m'
+    LIGHT_MAGENTA: str = ESC + '[95m'
+    LIGHT_CYAN: str = ESC + '[96m'
+    WHITE: str = ESC + '[97m'
 
 
 class Back(Style):
     """
     Background colors.
     """
-    CONTRAST = ESC + '[7m'
-
-    BLACK = ESC + '[40m'
-    RED = ESC + '[41m'
-    GREEN = ESC + '[42m'
-    YELLOW = ESC + '[43m'
-    BLUE = ESC + '[44m'
-    MAGENTA = ESC + '[45m'
-    CYAN = ESC + '[46m'
-    GRAY = ESC + '[47m'
-    LIGHT_BLACK = ESC + '[100m'
-    LIGHT_RED = ESC + '[101m'
-    LIGHT_GREEN = ESC + '[102m'
-    LIGHT_YELLOW = ESC + '[103m'
-    LIGHT_BLUE = ESC + '[104m'
-    LIGHT_MAGENTA = ESC + '[105m'
-    LIGHT_CYAN = ESC + '[106m'
-    LIGHT_GRAY = ESC + '[107m'
+    CONTRAST: str = ESC + '[7m'
+    BLACK: str = ESC + '[40m'
+    RED: str = ESC + '[41m'
+    GREEN: str = ESC + '[42m'
+    YELLOW: str = ESC + '[43m'
+    BLUE: str = ESC + '[44m'
+    MAGENTA: str = ESC + '[45m'
+    CYAN: str = ESC + '[46m'
+    GRAY: str = ESC + '[47m'
+    LIGHT_BLACK: str = ESC + '[100m'
+    LIGHT_RED: str = ESC + '[101m'
+    LIGHT_GREEN: str = ESC + '[102m'
+    LIGHT_YELLOW: str = ESC + '[103m'
+    LIGHT_BLUE: str = ESC + '[104m'
+    LIGHT_MAGENTA: str = ESC + '[105m'
+    LIGHT_CYAN: str = ESC + '[106m'
+    LIGHT_GRAY: str = ESC + '[107m'
 
 
 
@@ -123,4 +127,4 @@ def printc(message: str, style: str = "", end: str = "\n") -> None:
     return
 
 if __name__ == "__main__":
-    print("cf. Exemples.")
+    print("cf. Examples.")

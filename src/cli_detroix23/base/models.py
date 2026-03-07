@@ -1,15 +1,15 @@
 """
-CLI - Base
+# CLI.
 models.py
-Easy formatting with premade templates.
+Easy formatting with pre-made templates.
 Prefixes:
-    "$" select
-    "#" string input
-    "?" boolean input
+- "$" select;  
+- "#" string input;  
+- "?" boolean input;  
 
 """
 
-import base.style as style
+from cli_detroix23.base import style
 
 def select_gh_style(message: str, start: str = "$", usage: str = "[↑ ↓ - Enter to accept]") -> str:
     """

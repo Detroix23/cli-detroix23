@@ -1,13 +1,11 @@
 """
-CLI - Inputs
-exemples.py
+# CLI - Inputs
+src/cli_detroix23/inputs/examples.py
 """
 import sys
 
-import base.specials as specials
-import base.controls as controls
-import inputs.keys as keys
-import inputs.fetch
+from cli_detroix23.base import specials, controls
+from cli_detroix23.inputs import keys, fetch
 
 class SysReading:
     running: bool
@@ -34,7 +32,7 @@ def run_sys_reading() -> None:
 
 def run_basic_keys() -> None:
     """
-    Test the getter of key.
+    Test the getter of key, by printing an history of the pressed keys.
     """
     history: list[keys.Key] = list()
     history_length: int = 2
@@ -46,11 +44,11 @@ def run_basic_keys() -> None:
 
     print("\nGET KEY.", end="\n")
     while True:
-        append_to_history(history, inputs.fetch.get())
+        append_to_history(history, fetch.get())
         
         for key in history:
             mapped: list[str] = specials.filter_map(specials.NICE_MAP, key.key())
-            good: bool = inputs.fetch.compare(keys.Keys.DOWN, key)
+            good: bool = fetch.compare(keys.Keys.DOWN, key)
             print(f"\r{mapped}, key={repr(key)}, good={good}.")
         
         controls.up(len(history))
