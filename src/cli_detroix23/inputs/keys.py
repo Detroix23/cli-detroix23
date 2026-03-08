@@ -151,19 +151,19 @@ class Info:
 
 
 # Initialize the `Keys` constants attributes.
-KEYS_DICT = Keys.to_dict()
+KEYS_DICT: dict[str, Key] = Keys.to_dict()
 """ Dictionary form of the specials `Keys`. """
 
 # Shortcuts.
-ESC = Keys.ESC
-UP = Keys.UP
-DOWN = Keys.DOWN
-LEFT = Keys.LEFT
-RIGHT = Keys.RIGHT
-RETURN = Keys.RETURN
-LINE = Keys.LINE
-SPACE = Keys.SPACE
-INTERRUPT = Keys.INTERRUPT
+ESC: Key = Keys.ESC
+UP: Key = Keys.UP
+DOWN: Key = Keys.DOWN
+LEFT: Key = Keys.LEFT
+RIGHT: Key = Keys.RIGHT
+RETURN: Key = Keys.RETURN
+LINE: Key = Keys.LINE
+SPACE: Key = Keys.SPACE
+INTERRUPT: Key = Keys.INTERRUPT
 
 
 if __name__ == "__main__":

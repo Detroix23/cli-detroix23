@@ -5,7 +5,7 @@ src/cli_detroix23/shapes/base.py
 Draw basic shapes. Uses the screen script.
 """
 
-from cli_detroix23.compatibility import defaults
+from cli_detroix23.compatibility import defaults, types
 from cli_detroix23.maths import maths
 from cli_detroix23.animations import screen
 
@@ -58,7 +58,7 @@ class Shape:
         self.fill = fill
         self.show_center = show_center
 
-    def draw(self) -> maths.Table2D:
+    def draw(self) -> types.Table2D:
         """
         Return a 2D table of chars, to draw on the char table. 
         """
@@ -95,8 +95,8 @@ class Rectangle(Shape):
     ) -> None:
         super().__init__(support, position, size, fill, show_center)
     
-    def draw(self) -> maths.Table2D:
-        table: maths.Table2D = maths.create_table(self.size, self.fill)
+    def draw(self) -> types.Table2D:
+        table: types.Table2D = maths.create_table(self.size, self.fill)
 
         if self.show_center:
             table[self.size.y // 2][self.size.x // 2] = "0"
@@ -126,11 +126,11 @@ class RectangleHollow(Shape):
         super().__init__(support, position, size, fill, show_center)
         self.border_size: int = border_size
     
-    def draw(self) -> maths.Table2D:
+    def draw(self) -> types.Table2D:
         if self.border_size == 0:
             return [[self.fill] * self.size.x] * self.size.y
         else:
-            table: maths.Table2D = list()
+            table: types.Table2D = list()
             for y in range(self.size.y):
                 if self.border_size <= y < self.size.y - self.border_size:
                     table.append(
@@ -160,10 +160,10 @@ class Ellipse(Shape):
     ) -> None:
         super().__init__(support, position, size, fill, show_center)
 
-    def draw(self) -> maths.Table2D:
+    def draw(self) -> types.Table2D:
         size_x: int = self.size.x // 2
         size_y: int = self.size.y // 2
-        table: maths.Table2D = maths.create_table(maths.Size(self.size.x + 1, self.size.y + 1))
+        table: types.Table2D = maths.create_table(maths.Size(self.size.x + 1, self.size.y + 1))
         
         for y in maths.both_range(size_y + 1):
             for x in maths.both_range(size_x + 1):
@@ -176,7 +176,7 @@ class Ellipse(Shape):
         return table
 
 
-def str_to_table(text: str) -> maths.Table2D:
+def str_to_table(text: str) -> types.Table2D:
     """
     Transform a string, using the line break, to a 2D table.
     """
@@ -184,7 +184,7 @@ def str_to_table(text: str) -> maths.Table2D:
     blank_chars: set[str] = {" "}
 
     cursor: int = 0
-    table: maths.Table2D = list()
+    table: types.Table2D = list()
     line: list[str] = list()
     while cursor < len(text):
         # Line break
@@ -205,7 +205,7 @@ def str_to_table(text: str) -> maths.Table2D:
     return table
 
 
-def squarify_table(table: maths.Table2D, fill: str = "") -> None:
+def squarify_table(table: types.Table2D, fill: str = "") -> None:
     """
     Ensure that all sub-list, records are of the same length. \n
     Returns None but modify by reference the table.

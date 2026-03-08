@@ -20,10 +20,19 @@ class Animation:
     """
     Loading animation.
     """
-    _i: int
+    _iteration: int
     first_time: float
-
     state: State
+    symbols: Union[list[str], str]
+    maximum: int
+    span: int
+    multiple: int
+    empty: str
+    borders: str
+    prefix: str
+    suffix: str
+    ready_character: str
+    counters: dict[str, int]
 
     def __init__(
         self,
@@ -37,24 +46,19 @@ class Animation:
         suffix: str = " ",
         more_counters: list[str] = list()
     ) -> None:
-        self._i = 0
+        self._iteration = 0
         self.first_time: float = 0
         self.state: State = State.READY
-
-        self.symbols: Union[list[str], str] = symbols
-
-        self.max: int = maximum
-        self.span: int = span
-        self.multiple: int = multiple
-        self.empty: str = empty
-        
-        self.borders: str = borders
-        self.prefix: str = prefix
-        self.suffix: str = suffix
-        
-        self.ready_character: str = "..."
-
-        self.counters: dict[str, int] = {counter: 0 for counter in more_counters}
+        self.symbols = symbols
+        self.maximum = maximum
+        self.span = span
+        self.multiple = multiple
+        self.empty = empty
+        self.borders = borders
+        self.prefix = prefix
+        self.suffix = suffix
+        self.ready_character = "..."
+        self.counters = {counter: 0 for counter in more_counters}
 
 
 class Bar(Animation):
@@ -84,14 +88,14 @@ class Bar(Animation):
             more_counters,
         )
         # For Bar, ensure max > 0
-        self.max = self.max if self.max > 0 else 1
+        self.maximum = self.maximum if self.maximum > 0 else 1
 
         
     def reset(self) -> None:
         """
         Reset the counter. Run this method when using default bars.
         """
-        self._i = 0
+        self._iteration = 0
         self.first_time: float = 0
         self.state = State.READY
 
@@ -100,24 +104,24 @@ class Bar(Animation):
             self.first_time = time.monotonic()
             self.state = State.RUNNING
         
-        self._i += add
+        self._iteration += add
         progress_bar_symbol: str = self.symbols[0]
         bar: str
-        if self.multiple > 0 and self._i <= self.max:
-            true_i: int = int(self.multiple * (float(self._i) / float(self.max)))
+        if self.multiple > 0 and self._iteration <= self.maximum:
+            true_i: int = int(self.multiple * (float(self._iteration) / float(self.maximum)))
             bar = (
                 progress_bar_symbol * true_i
                 + self.empty * (self.multiple - true_i)
             )
-        elif self.multiple > 0 and self._i > self.max:
+        elif self.multiple > 0 and self._iteration > self.maximum:
             bar = progress_bar_symbol * self.multiple 
-        elif self._i <= self.max:
+        elif self._iteration <= self.maximum:
             bar = (
-                progress_bar_symbol * self._i
-                + self.empty * (self.max - self._i)
+                progress_bar_symbol * self._iteration
+                + self.empty * (self.maximum - self._iteration)
             )
         else:
-            bar = progress_bar_symbol * self.max
+            bar = progress_bar_symbol * self.maximum
 
         template: str = "\r"
 
@@ -127,9 +131,9 @@ class Bar(Animation):
         template += self.borders
         template += " - "
 
-        percentage: float = self._i / self.max * 100
+        percentage: float = self._iteration / self.maximum * 100
         template += f"{percentage:.1f}% "
-        template += f"{self._i}/{self.max}ops "
+        template += f"{self._iteration}/{self.maximum}ops "
 
         time_elapsed: float = time.monotonic() - self.first_time
         template += f"{time_elapsed:.2f}s "
@@ -149,8 +153,8 @@ class Bar(Animation):
         Allow to prematurely and ensure the bar to complete.
         Fill the bar on call.
         """
-        if self._i < self.max:
-            self._i = self.max
+        if self._iteration < self.maximum:
+            self._iteration = self.maximum
         
         self.state = State.FINISHED
         # Show cursor again
@@ -198,7 +202,7 @@ class Spinner(Animation):
         """
         Reset the counter. Run this method when using default bars.
         """
-        self._i = 0
+        self._iteration = 0
         self.first_time: float = 0
         self.state = State.READY
         # Update custom counters
@@ -212,8 +216,8 @@ class Spinner(Animation):
             self.first_time = time.monotonic()
             self.state = State.RUNNING
         
-        self._i += add
-        i: int = self._i // self.multiple
+        self._iteration += add
+        i: int = self._iteration // self.multiple
         
         spinner: str = ""
         for j in range(self.span):
@@ -234,12 +238,12 @@ class Spinner(Animation):
         template += " - "
 
         # Main counter
-        if self.max != 0:
-            percentage: float = self._i / self.max * 100
+        if self.maximum != 0:
+            percentage: float = self._iteration / self.maximum * 100
             template += f"{percentage:.1f}% "
-            template += f"{self._i}/{self.max}ops "
+            template += f"{self._iteration}/{self.maximum}ops "
         else:
-            template += f"{self._i}ops "
+            template += f"{self._iteration}ops "
 
         # Custom counters
         if self.counters:
@@ -264,7 +268,7 @@ class Spinner(Animation):
     def __copy__(self) -> 'Spinner':
         copied: 'Spinner' = Spinner(
             self.symbols, 
-            self.max, 
+            self.maximum, 
             span=self.span, 
             multiple=self.multiple
         )
@@ -276,8 +280,8 @@ class Spinner(Animation):
         Allow to prematurely and ensure the spinner to complete.
         Set the state to FINISHED, and update one last time.
         """
-        if self._i < self.max:
-            self._i = self.max
+        if self._iteration < self.maximum:
+            self._iteration = self.maximum
 
         self.state = State.FINISHED
         # Show cursor again
@@ -293,6 +297,8 @@ bars: dict[str, Bar] = {
         multiple=10    
     ),
 }
+""" Default pre-made bars. """
+
 spinners: dict[str, Spinner] = {
     "Bars1": Spinner(
         ["│", "╲", "─", "/"],
@@ -317,11 +323,14 @@ spinners: dict[str, Spinner] = {
         "▙▌▛▔▜▐▟▁"
     ),
 }
+""" Default pre-made spinners. """
 
 def main() -> None:
+    """
+    Main test/ example.
+    """
     run_bars1()
     run_spinners1()
-
 
 def run_spinners1() -> None:
     b: Spinner = spinners["Wave1"]

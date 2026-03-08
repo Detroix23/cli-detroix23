@@ -1,0 +1,3 @@
+from cli_detroix23.base import code as code, style as style
+
+def main() -> None: ...

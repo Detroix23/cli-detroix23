@@ -8,6 +8,11 @@ from cli_detroix23.shapes import base, sprites
 
 # Examples.
 class Example1(screen.Screen):
+    rect1: base.Rectangle
+    rect_hollow1: base.RectangleHollow
+    ell1: base.Ellipse
+    sprite1: sprites.Sprite
+
     def __init__(
         self, 
         void_char: str = "'", 

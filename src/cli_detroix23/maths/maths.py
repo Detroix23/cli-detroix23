@@ -1,5 +1,5 @@
 """
-CLI - Maths
+# CLI - Maths.
 src/cli_detroix23/maths/maths.py
 
 Basic maths structures.
@@ -8,8 +8,6 @@ import os
 import math
 
 from cli_detroix23.compatibility import types
-
-Table2D = types.Table2D
 
 class Size:
     """
@@ -107,13 +105,13 @@ def middle_range(number: int) -> list[int]:
     return [i - number // 2 for i in range(number)]
 
 
-def create_table(size: Size, character: str = "") -> Table2D:
+def create_table(size: Size, character: str = "") -> types.Table2D:
     """
     Return a 2D table; by default, full of empty strings.
     """
     return [[character for _ in range(size.x)] for _ in range(size.y)]
 
-def create_table_like(model: Table2D, character: str = "") -> Table2D:
+def create_table_like(model: types.Table2D, character: str = "") -> types.Table2D:
     """
     Return a 2D table that can contain the model; by default, full of empty strings.
     """

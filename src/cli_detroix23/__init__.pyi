@@ -8,9 +8,13 @@ The most useful will be found in:
 - `animations`.
 """
 
-from . import (
-    base, compatibility, maths, animations, inputs, shapes  # pyright: ignore[reportUnusedImport]
-)
-
 from base import *
 from animations import *
+from . import (
+    animations as animations, 
+    base as base, 
+    compatibility as compatibility, 
+    inputs as inputs, 
+    maths as maths, 
+    shapes as shapes,
+)
