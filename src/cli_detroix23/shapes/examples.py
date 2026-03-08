@@ -55,11 +55,9 @@ Another line...
 For the sprite!
 """)
 
-    ex1 = Example1(
-        frame_delay=1,
-    )
+    ex1 = Example1(frame_delay=1)
 
-    ex1.run(Example1.updater, Example1.drawer)
+    ex1.run(ex1.updater, ex1.drawer)
 
 if __name__ == "__main__":
     run_example1()

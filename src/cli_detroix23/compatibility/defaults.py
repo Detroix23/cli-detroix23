@@ -3,7 +3,7 @@
 src/cli_detroix23/compatibility/defaults.py
 """
 
-from typing import Final
+from typing import Final, Callable
 
 from cli_detroix23.base import style
 
@@ -19,3 +19,13 @@ USER_INCORRECT_INPUT: Final[str] = LOG_WARNING + " Incorrect input. Please try a
 
 INPUTS_NO: Final[list[str]] = ["No", "NO", "no", "n", "N"]
 INPUTS_YES: Final[list[str]] = ["Yes", "YES", "yes", "ye", "y", "Y"]
+
+def _null_function() -> None:
+    """
+    Takes no arguments,
+    typed to return `None`,
+    raise an exception if executed.
+    """ 
+    raise RuntimeError("Tried to execute the `null_function`.")
+
+NULL_FUNCTION: Final[Callable[[], None]] = _null_function

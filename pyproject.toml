@@ -1,6 +1,6 @@
 [project]
 name = "cli_detroix23"
-version = "0.4.0"
+version = "0.4.1"
 description = "A CLI all-in tool made for myself."
 authors = [
     { name="Detroix23", email="detroix23@gmail.com" }

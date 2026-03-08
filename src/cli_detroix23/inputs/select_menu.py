@@ -1,5 +1,5 @@
 """
-# CLI - Inputs
+# CLI - Inputs.
 src/cli_detroix23/inputs/select_menu.py
 """
 
@@ -11,7 +11,10 @@ from cli_detroix23.inputs import fetch, keys
 
 class SelectMenu:
     """
-    Select with arrow. Most of the code is from Claude.
+    # `SelectMenu`, choose one in a list of choices.
+    Scroll with arrows UP and DOWN, select with ENTER.
+    
+    Most of the code is from Claude.
     """
     options: list[str]
     prompt: str
@@ -32,23 +35,22 @@ class SelectMenu:
         """
         return fetch.get()
 
-    def _clear_menu(self, num_lines: int) -> None:
+    def _clear_menu(self, lines: int) -> None:
         """
-        Clear the menu from terminal, if isn't `ENABLE_DEBUG`.
+        Clear the menu by moving the cursor up `lines` times, if isn't `ENABLE_DEBUG`.
         """
         if debug.ENABLE_DEBUG:
             return
 
-        for _ in range(num_lines):
-            controls.up()
-            controls.clear_line(2)  
+        controls.up(lines)
         sys.stdout.flush()
     
     def _draw_menu(self) -> None:
         """
-        Draw the menu with current selection highlighted
+        Draw the menu with current selection highlighted.
         """
         print(self.prompt)
+
         for index, option in enumerate(self.options):
             if index == self.selected_index:
                 # Highlight selected option (style).
@@ -58,6 +60,7 @@ class SelectMenu:
                 ) 
             else:
                 print(f"{' ' * len(self.select_character)}{option}")
+        
         # sys.stdout.flush()
     
     def show(self) -> str:
@@ -86,6 +89,7 @@ class SelectMenu:
                 # Clear and redraw menu
                 self._clear_menu(len(self.options) + 1)
                 self._draw_menu()
+        
         except KeyboardInterrupt:
             raise KeyboardInterrupt(f"{style.Color.YELLOW}{defaults.LOG_INFO}Keyboard Interrupt. {style.END}")
         

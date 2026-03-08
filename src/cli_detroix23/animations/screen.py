@@ -28,13 +28,15 @@ class ReadingWay(Enum):
 class Screen:
     """
     # Define a whole CLI application.
-    See `./animations/examples.py` for example applications. \r
-    Main method: `run`, taking an `updater` and a `drawer`. \r
+    See `./animations/examples.py` for example applications.  
+    Main method: `run`, taking an `updater` and a `drawer` function.  
     """
     running: bool
     size: maths.Size
-    updater: Optional[Callable[..., None]]
-    drawer: Optional[Callable[..., None]]
+    _updater: Callable[[], None]
+    """ Raw higher-level updater function. """
+    _drawer: Callable[[], None]
+    """ Raw higher-level drawer function. """
     _frames: int
     debug: bool
     deactivate_screen: bool
@@ -45,6 +47,7 @@ class Screen:
     previous_char_table: list[list[str]]
     read_keys: bool
     _key_information: keys.Info
+    activate_threads: bool
     threads: dict[str, threading.Thread]
 
     def __init__(
@@ -55,11 +58,12 @@ class Screen:
         debug: bool = False,
         deactivate_screen: bool = False,
         read_keys: bool = False,
+        activate_threads: bool = False,
     ) -> None:
         self.running = False
         self.size = maths.Size(*self.update_size())
-        self.updater = None
-        self.drawer = None
+        self._updater = defaults.NULL_FUNCTION
+        self._drawer = defaults.NULL_FUNCTION
         self._frames = 0
         self.debug = debug
         self.deactivate_screen = deactivate_screen
@@ -70,12 +74,15 @@ class Screen:
         self.previous_char_table = self.blank_char_table()
         self.read_keys = read_keys
         self._key_information = keys.Info()
+        self.activate_threads = activate_threads
         self.threads = dict()
 
     def start_threads(self) -> int:
         """
-        Create and start `keys`, `draw` threads. \r
+        Create and start `keys`, `draw` threads.  
         Returns the number of threads created.
+
+        W.I.P: Extreme lag caused by superposition of reading and writing `stdout`.
         """
         ENABLE: Final[dict[str, bool]] = {
             "keys": self.read_keys,
@@ -104,7 +111,8 @@ class Screen:
 
     def join_threads(self) -> int:
         """
-        Joins all running threads. \r
+        Joins all running threads.  
+
         Return thread count.
         """
         for name, thread in self.threads.items():
@@ -115,23 +123,23 @@ class Screen:
 
     def _draw(self) -> None:
         """
-        Local draw function for 1 frame.
+        **Local** draw function for 1 frame, that wraps the `drawer` method.
         """
         # Clear the whole screen.
-        if not (self.deactivate_screen or self.debug):
+        if not self.deactivate_screen and not self.debug:
             controls.home()
-            controls.clear_to_bottom()
-            sys.stdout.flush()
+            # Deactivated because causes the flickering effect.
+            #controls.clear_to_bottom()
 
         debug.debug_print(f"Screen._draw - User draw.")
-        if self.drawer is not None:
-            self.drawer(self)
+        self._drawer()
 
         # Char table
         debug.debug_print(f"Screen._draw - Char table.")
         if self.debug:
             print(f"{repr(self.char_table)}")
-        if not (self.debug or self.deactivate_screen):
+        
+        if not self.debug and not self.deactivate_screen:
             self.print_char_table()
         
         self.previous_char_table = self.char_table
@@ -144,14 +152,13 @@ class Screen:
 
     def _update(self) -> None:
         """
-        Local update function for 1 frame.
+        **Local** update function for 1 frame, that wraps the `updater` method.
         """
         # Update.
         self.size = maths.Size(*self.update_size())
 
         # User updater function.
-        if self.updater is not None:
-            self.updater(self)
+        self._updater()
 
         return
 
@@ -167,53 +174,54 @@ class Screen:
             time.sleep(self.frame_delay)
             self._frames += 1
 
+            if not self.activate_threads and self._key_information.current == keys.Keys.INTERRUPT:
+                raise KeyboardInterrupt(f"KeyboardInterrupt. Felt from `Screen.run`.")
+
         return
 
     def run(
         self,       
-        updater: Callable[..., None], 
-        drawer: Callable[..., None],
+        updater: Callable[[], None], 
+        drawer: Callable[[], None],
     ) -> None:
         """
         Screen main loop, using `updater` and `drawer` as functions.
         """
-        self.updater = updater
-        self.drawer = drawer
+        self._updater = updater
+        self._drawer = drawer
         self._frames: int = 0
         self.running = True
         self._key_information.running = True
 
-        self.start_threads()
+        if self.activate_threads:
+            self.start_threads()
 
-        try:
-            # Backend loop, no delay.
-            debug.debug_print("Started main loop.")
-            while self.running:
-                # Keyboard interrupt.
-                if self._key_information.current == keys.Keys.INTERRUPT:
-                    raise KeyboardInterrupt(f"KeyboardInterrupt. Felt from `Screen.run`.")
-            
-        except KeyboardInterrupt:
-            self.running = False
-            self._key_information.running = False
-
-            sys.stdout.write("\033[H\033[2J")
-            sys.stdout.flush()
-            style.printc(f"{defaults.LOG_INFO}Keyboard interrupt. Felt from `Screen.run`.", style.Color.YELLOW)
-
-        finally:
-            self.running = False
-            self._key_information.running = False
-
-            self.join_threads()
-
-            if os.name == "posix":
-                from cli_detroix23.compatibility import unix
+        else:
+            try:
+                debug.debug_print("Started main loop.")
+                self._game_loop()
                 
-                debug.debug_print("Screen.run - End: reset CL settings.")
-                unix.set_to_default()
+            except KeyboardInterrupt:
+                self.running = False
+                self._key_information.running = False
 
-            sys.stdout.flush()
+                sys.stdout.write("\033[H\033[2J")
+                style.printc(f"{defaults.LOG_INFO}Keyboard interrupt. Felt from `Screen.run`.", style.Color.YELLOW)
+                sys.stdout.flush()
+
+            finally:
+                self.running = False
+                self._key_information.running = False
+
+                self.join_threads()
+
+                if os.name == "posix":
+                    from cli_detroix23.compatibility import unix
+                    
+                    debug.debug_print("Screen.run - End: reset CL settings.")
+                    unix.set_to_default()
+
+                sys.stdout.flush()
 
     def update_size(self) -> tuple[int, int]:
         size: tuple[int, int] = os.get_terminal_size()

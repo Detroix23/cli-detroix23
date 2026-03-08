@@ -86,11 +86,12 @@ class Key:
 
 class Keys:
     """
-    Contains all specials keys. \r
-    Common keys are directly mapped to their string equivalents. \r
-    All keys are using the `Key` class. \n
+    # `Keys`. List all supported specials keys.
+    Common keys are directly mapped to their string equivalents (`Key.new_common`).
+
+    All keys are using the `Key` class. _Example_:
     ```python
-        UP = Key("Arrow up", "\\x1b[A", "\\x1b[A")
+    UP = Key("Arrow up", "\\x1b[A", "\\x1b[A")
     ``` 
     """
     ESC: Final[Key] = Key("Escape", specials.WINDOWS, specials.ESC_BYTES)
@@ -122,7 +123,6 @@ class Keys:
         return keys
 
 
-
 @dataclasses.dataclass
 class Info:
     """
@@ -151,7 +151,20 @@ class Info:
 
 
 # Initialize the `Keys` constants attributes.
-Keys.to_dict()
+KEYS_DICT = Keys.to_dict()
+""" Dictionary form of the specials `Keys`. """
+
+# Shortcuts.
+ESC = Keys.ESC
+UP = Keys.UP
+DOWN = Keys.DOWN
+LEFT = Keys.LEFT
+RIGHT = Keys.RIGHT
+RETURN = Keys.RETURN
+LINE = Keys.LINE
+SPACE = Keys.SPACE
+INTERRUPT = Keys.INTERRUPT
+
 
 if __name__ == "__main__":
     exit("cf. Examples.")

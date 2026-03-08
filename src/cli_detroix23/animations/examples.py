@@ -11,6 +11,7 @@ from cli_detroix23.maths import maths, transformations
 from cli_detroix23.base import style
 from cli_detroix23.animations import screen
 
+# Matrix example.
 class Droplet:
     """
     Single droplet for the Matrix's digital rain.
@@ -66,6 +67,7 @@ class Droplet:
 
         return tail
 
+
 class Matrix(screen.Screen):
     digital_rain: list[Droplet]
     character_random_range: tuple[int, int]
@@ -76,14 +78,16 @@ class Matrix(screen.Screen):
         self,
         frame_delay: float,
         character_random_range: tuple[int, int] = (40, 127),
-        infos: bool = False
+        infos: bool = False,
+        activate_threads: bool = False,
     ) -> None:
         super().__init__(
             frame_delay=frame_delay,
             void_char=" ",
             global_style=style.Back.BLACK,
             debug=False,
-            deactivate_screen=False
+            deactivate_screen=False,
+            activate_threads=activate_threads,
         )
         self.digital_rain: list[Droplet] = list()
         self.character_random_range: tuple[int, int] = character_random_range
@@ -139,6 +143,8 @@ class Matrix(screen.Screen):
             cursor += 1 + self.write(f"y:{self.size.y}", maths.Vector2D(cursor, 0), screen.ReadingWay.LEFT_RIGHT)
             cursor += 1 + self.write(f"n:{len(self.digital_rain)}",maths. Vector2D(cursor, 0), screen.ReadingWay.LEFT_RIGHT)
 
+
+# Game of life example. 
 class CellState(Enum):
     DEAD = 0
     ALIVE = 1
@@ -150,16 +156,23 @@ class GameOfLife(screen.Screen):
     _to_breed: set[int] = {3}
     _to_survive: set[int] = {2, 3}
 
-
     def __init__(
         self, 
         void_char: str = ".", 
         frame_delay: float = 0.1, 
         global_style: str = "", 
         debug: bool = False, 
-        deactivate_screen: bool = False
+        deactivate_screen: bool = False,
+        activate_threads: bool = False,
     ) -> None:
-        super().__init__(void_char, frame_delay, global_style, debug, deactivate_screen)
+        super().__init__(
+            void_char, 
+            frame_delay, 
+            global_style, 
+            debug, 
+            deactivate_screen,
+            activate_threads,
+        )
         
         self.board = [[CellState.DEAD for _ in range(self.size.x)] for _ in range(self.size.y)]
 
@@ -169,18 +182,18 @@ class GameOfLife(screen.Screen):
             line: list[CellState] = list()
             for y, state in enumerate(row):
                 count: int = self.count_neighbours(maths.Vector2D(x, y))
-                if ((state == CellState.ALIVE and count in self._to_survive)
+                if (
+                    (state == CellState.ALIVE and count in self._to_survive)
                     or (state == CellState.DEAD and count in self._to_breed)    
                 ):
                     line.append(CellState.ALIVE)
                 else:
                     line.append(CellState.DEAD)
                     assert count != 3
+
             new.append(line)
         
         self.board = new
-
-        
 
     def drawer(self) -> None:
         for y, row in enumerate(self.board):
@@ -217,10 +230,10 @@ class GameOfLife(screen.Screen):
         Return the number of neighbours.
         """
         count: int = 0
-        for neighbour in transformations.RELATIVE_NEIGHBOURS:
+        for neighbor in transformations.RELATIVE_NEIGHBOURS:
             state: CellState
-            x: int = int(neighbour.x + coordinates.x)
-            y: int = int(neighbour.y + coordinates.y)
+            x: int = int(neighbor.x + coordinates.x)
+            y: int = int(neighbor.y + coordinates.y)
             if (0 <= x < self.size.x
                 and 0 <= y < self.size.y
             ):
@@ -235,20 +248,21 @@ class GameOfLife(screen.Screen):
 
 
 def run_matrix() -> None:
-    # (48, 49) binary.
-	# (32, 132) general.
+    """
+    ASCII character range.
+    - (48, 49) binary.
+	- (32, 132) general.
+    """
     screen = Matrix(
         frame_delay=1/27,
         character_random_range=(32, 132),
-        infos=True
+        infos=True,
     )
     
-    screen.run(Matrix.updater, Matrix.drawer)
+    screen.run(screen.updater, screen.drawer)
 
 def run_game_of_life() -> None:
-    screen = GameOfLife(
-        frame_delay=1,
-    )
+    screen = GameOfLife(frame_delay=1)
 
     screen.set_multiple([
         maths.Size(10, 10),
@@ -256,7 +270,7 @@ def run_game_of_life() -> None:
         maths.Size(9, 9),
     ], CellState.ALIVE)
 
-    screen.run(GameOfLife.updater, GameOfLife.drawer)
+    screen.run(screen.updater, screen.drawer)
 
 def main() -> None:
 	run_matrix()
